@@ -11,11 +11,15 @@ import CoreData
 @main
 struct HRDeskApp: App {
     let persistenceController = PersistenceController.shared
-
+    
+    @StateObject private var session = SessionManager()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                
+                RootView()
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    .environmentObject(session)            
         }
     }
 }
