@@ -27,9 +27,8 @@ struct SignupView: View {
     private var isFormValid: Bool {
         !fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        password.count >= 6 &&
-        passwordsMatch &&
-        agreeToTerms
+        password.count >= 8 &&
+        passwordsMatch
     }
 
     var body: some View {
