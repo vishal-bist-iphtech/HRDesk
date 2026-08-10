@@ -8,12 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @StateObject private var todoViewModel = TodoViewModel()
+    @StateObject private var jobViewModel = JobViewModel()
 
     var body: some View {
         TabView {
             HomeView()
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
+                }
+
+            JobsView()
+                .tabItem {
+                    Label("Jobs", systemImage: "briefcase.fill")
                 }
 
             CandidatesView()
@@ -25,13 +33,10 @@ struct ContentView: View {
                 .tabItem {
                     Label("Employees", systemImage: "person.3.fill")
                 }
-
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle.fill")
-                }
         }
         .tint(Color("textSecondary"))
+        .environmentObject(todoViewModel)
+        .environmentObject(jobViewModel)
     }
 }
 

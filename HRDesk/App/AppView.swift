@@ -70,13 +70,15 @@ struct AppView: View {
             } label: {
                 HStack {
                     Text("Login")
-                        .font(.headline)
-                    Spacer()
-                    Image(systemName: "arrow.right")
-                        .font(.headline)
+                        .font(.title3.bold())
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(Color("textSecondary"), lineWidth: 1.5)
+                        )
                 }
                 .foregroundStyle(.white)
-                .padding()
                 .background(Color("textSecondary"))
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }
