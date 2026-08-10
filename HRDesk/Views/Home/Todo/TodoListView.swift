@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TodoListView: View {
 
-    @ObservedObject var todoViewModel: TodoViewModel
+    @EnvironmentObject private var todoViewModel: TodoViewModel
 
     var body: some View {
 
@@ -40,9 +40,7 @@ struct TodoListView: View {
 
                 NavigationLink {
 
-                    AddTaskView(
-                        todoViewModel: todoViewModel
-                    )
+                    AddTaskView()
 
                 } label: {
 
@@ -62,24 +60,58 @@ struct TodoListView: View {
                     todo: todo
                 ) {
 
-                    todoViewModel.toggleCompletion(todo)
+                    todoViewModel.toggleCompletion(
+                        todo
+                    )
+                }
+                .swipeActions(
+                    edge: .trailing,
+                    allowsFullSwipe: false
+                ) {
+
+                    Button(
+                        role: .destructive
+                    ) {
+
+                        deleteTodo(todo)
+
+                    } label: {
+
+                        Label(
+                            "Delete",
+                            systemImage: "trash"
+                        )
+                    }
+
+                    NavigationLink {
+
+                        EditTaskView(
+                            todo: todo
+                        )
+
+                    } label: {
+
+                        Label(
+                            "Edit",
+                            systemImage: "pencil"
+                        )
+                    }
+                    .tint(.orange)
                 }
                 .listRowSeparator(.hidden)
                 .listRowBackground(
                     Color.clear
                 )
             }
-            .onDelete { indexSet in
-
-                for index in indexSet {
-
-                    todoViewModel.deleteTodo(
-                        todoViewModel.todos[index]
-                    )
-                }
-            }
         }
         .listStyle(.plain)
+    }
+    
+    private func deleteTodo(
+        _ todo: TodoEntity
+    ) {
+
+        todoViewModel.deleteTodo(todo)
     }
 }
 
@@ -87,8 +119,7 @@ struct TodoListView: View {
 
     NavigationStack {
 
-        TodoListView(
-            todoViewModel: TodoViewModel()
-        )
+        TodoListView()
+            .environmentObject(TodoViewModel())
     }
 }

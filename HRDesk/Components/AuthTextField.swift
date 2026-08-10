@@ -52,6 +52,7 @@ struct AuthTextField: View {
 
 #Preview {
     VStack(spacing: 16) {
+        AuthTextField(icon: "person.fill", title: "Full Name", text: .constant(""), keyboard: .default)
         AuthTextField(icon: "envelope.fill", title: "Email", text: .constant(""), keyboard: .emailAddress)
         AuthTextField(icon: "lock.fill", title: "Password", text: .constant("secret"), isSecure: true)
     }

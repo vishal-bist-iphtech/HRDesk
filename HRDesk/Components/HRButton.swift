@@ -22,8 +22,10 @@ struct HRButton: View {
                     ProgressView()
                         .tint(isSecondary ? Color("textSecondary") : .white)
                 }
-                Text(title)
-                    .font(.headline)
+                else {
+                    Text(title)
+                        .font(.headline)
+                }
             }
             .frame(maxWidth: .infinity)
             .padding()
@@ -42,7 +44,7 @@ struct HRButton: View {
 #Preview {
     VStack(spacing: 16) {
         HRButton(title: "Sign In") {}
-        HRButton(title: "Loading...", isLoading: true) {}
+        HRButton(title: "Loading...", isLoading: false) {}
         HRButton(title: "Create Account", isSecondary: true) {}
     }
     .padding()

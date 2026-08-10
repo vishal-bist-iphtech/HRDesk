@@ -11,7 +11,7 @@ struct AddTaskView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject var todoViewModel: TodoViewModel
+    @EnvironmentObject private var todoViewModel: TodoViewModel
 
     @State private var title = ""
     @State private var dueDate = Date()
