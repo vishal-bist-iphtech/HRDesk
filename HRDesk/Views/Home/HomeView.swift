@@ -12,6 +12,9 @@ struct HomeView: View {
     @EnvironmentObject private var session: SessionManager
     
     @EnvironmentObject var todoViewModel: TodoViewModel
+    @EnvironmentObject var jobViewModel: JobViewModel
+
+    @StateObject private var dashboardViewModel = DashboardViewModel()
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -22,12 +25,18 @@ struct HomeView: View {
         }
     }
 
-    private let stats: [(icon: String, title: String, value: String, tint: Color)] = [
-        ("briefcase.fill", "Open Jobs", "12", Color("textSecondary")),
-        ("person.2.fill", "Applied", "48", .orange),
-        ("checkmark.circle.fill", "Interviews", "16", .green),
-        ("clock.fill", "Pending", "8", .purple)
-    ]
+    private var userName: String {
+        session.currentUser?.fullName ?? "Vishal"
+    }
+
+    private var stats: [(icon: String, title: String, value: String, tint: Color)] {
+        [
+            ("briefcase.fill", "Open Jobs", "\(dashboardViewModel.openJobs)", Color("textSecondary")),
+            ("person.2.fill", "Applied", "\(dashboardViewModel.applications)", .orange),
+            ("checkmark.circle.fill", "Interviews", "\(dashboardViewModel.interviewsToday)", .green),
+            ("person.crop.circle.badge.checkmark", "Hired", "\(dashboardViewModel.hiredCandidates)", .purple)
+        ]
+    }
 
     var body: some View {
         NavigationStack {
@@ -43,6 +52,9 @@ struct HomeView: View {
                     }
                     .padding()
                 }
+        }
+        .onAppear {
+            dashboardViewModel.refresh()
         }
     }
 
@@ -64,7 +76,7 @@ struct HomeView: View {
                         Text(greeting)
                             .font(.title3)
                             .foregroundStyle(.secondary)
-                        Text("Vishal")
+                        Text(userName)
                             .font(.title3.bold())
                             .foregroundStyle(Color("textPrimary"))
                     }
@@ -279,6 +291,7 @@ struct HomeView: View {
 #Preview {
     HomeView()
         .environmentObject(SessionManager())
+        .environmentObject(AuthViewModel())
         .environmentObject(TodoViewModel())
         .environmentObject(JobViewModel())
 }
