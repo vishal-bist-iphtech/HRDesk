@@ -10,6 +10,7 @@ import SwiftUI
 struct SignupView: View {
 
     @EnvironmentObject private var session: SessionManager
+    @EnvironmentObject private var authViewModel: AuthViewModel
     @Environment(\.dismiss) private var dismiss
 
     @State private var fullName = ""
@@ -107,10 +108,18 @@ struct SignupView: View {
         }
         guard isFormValid else { return }
 
+        let fullName = fullName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let email = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let password = password
         isLoading = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            isLoading = false
-            session.login()
+            if let user = authViewModel.signUp(fullName: fullName, email: email, password: password) {
+                isLoading = false
+                session.login(with: user)
+            } else {
+                isLoading = false
+                showAlert = true
+            }
         }
     }
 }
@@ -119,5 +128,6 @@ struct SignupView: View {
     NavigationStack {
         SignupView()
             .environmentObject(SessionManager())
+            .environmentObject(AuthViewModel())
     }
 }

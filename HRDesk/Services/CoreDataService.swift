@@ -238,4 +238,149 @@ final class CoreDataService {
             return []
         }
     }
+
+    // MARK: - Auth
+
+    func addUser(
+        fullName: String,
+        email: String,
+        password: String
+    ) -> UserEntity? {
+
+        let request: NSFetchRequest<UserEntity> =
+            UserEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "email ==[c] %@",
+            email
+        )
+
+        if let existing = try? context.fetch(request).first {
+            return existing
+        }
+
+        let user = UserEntity(context: context)
+
+        user.id = UUID()
+        user.fullName = fullName
+        user.email = email
+        user.password = password
+        user.createdAt = Date()
+
+        saveContext()
+
+        return user
+    }
+
+    func authenticateUser(
+        email: String,
+        password: String
+    ) -> UserEntity? {
+
+        let request: NSFetchRequest<UserEntity> =
+            UserEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "email ==[c] %@ AND password == %@",
+            email,
+            password
+        )
+
+        do {
+            return try context.fetch(request).first
+        } catch {
+            print(
+                "Failed to authenticate user:",
+                error.localizedDescription
+            )
+
+            return nil
+        }
+    }
+
+    // MARK: - Dashboard Counts
+
+    func countActiveJobs() -> Int {
+
+        let request: NSFetchRequest<JobEntity> =
+            JobEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "isActive == YES"
+        )
+
+        do {
+            return try context.count(for: request)
+        } catch {
+            print(
+                "Failed to count active jobs:",
+                error.localizedDescription
+            )
+
+            return 0
+        }
+    }
+
+    func fetchCandidates() -> [CandidateEntity] {
+
+        let request: NSFetchRequest<CandidateEntity> =
+            CandidateEntity.fetchRequest()
+
+        request.sortDescriptors = [
+            NSSortDescriptor(
+                key: "createdAt",
+                ascending: false
+            )
+        ]
+
+        do {
+            return try context.fetch(request)
+        } catch {
+            print(
+                "Failed to fetch candidates:",
+                error.localizedDescription
+            )
+
+            return []
+        }
+    }
+
+    func countCandidates() -> Int {
+
+        let request: NSFetchRequest<CandidateEntity> =
+            CandidateEntity.fetchRequest()
+
+        do {
+            return try context.count(for: request)
+        } catch {
+            print(
+                "Failed to count candidates:",
+                error.localizedDescription
+            )
+
+            return 0
+        }
+    }
+
+    func countHiredCandidates() -> Int {
+
+        let request: NSFetchRequest<CandidateEntity> =
+            CandidateEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "status ==[c] %@",
+            "hired"
+        )
+
+        do {
+            return try context.count(for: request)
+        } catch {
+            print(
+                "Failed to count hired candidates:",
+                error.localizedDescription
+            )
+
+            return 0
+        }
+    }
 }

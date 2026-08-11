@@ -10,6 +10,7 @@ import SwiftUI
 struct LoginView: View {
 
     @EnvironmentObject private var session: SessionManager
+    @EnvironmentObject private var authViewModel: AuthViewModel
     @Environment(\.dismiss) private var dismiss
 
     @State private var email = ""
@@ -17,6 +18,7 @@ struct LoginView: View {
     @State private var showPassword = false
     @State private var isLoading = false
     @State private var showForgotAlert = false
+    @State private var showErrorAlert = false
 
     private var isFormValid: Bool {
         !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
@@ -43,6 +45,11 @@ struct LoginView: View {
         } message: {
             Text("Koi nhi hota hai, ye try krke dekho - 'qwer1234'.")
                 .fontWeight(.bold)
+        }
+        .alert("Login Failed", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Invalid email or password. Please try again.")
         }
     }
 
@@ -107,10 +114,17 @@ struct LoginView: View {
 
     private func login() {
         guard isFormValid else { return }
+        let email = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let password = password
         isLoading = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            isLoading = false
-            session.login()
+            if let user = authViewModel.login(email: email, password: password) {
+                isLoading = false
+                session.login(with: user)
+            } else {
+                isLoading = false
+                showErrorAlert = true
+            }
         }
     }
 }
@@ -119,5 +133,6 @@ struct LoginView: View {
     NavigationStack {
         LoginView()
             .environmentObject(SessionManager())
+            .environmentObject(AuthViewModel())
     }
 }

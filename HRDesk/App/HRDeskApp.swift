@@ -13,13 +13,15 @@ struct HRDeskApp: App {
     let persistenceController = PersistenceController.shared
     
     @StateObject private var session = SessionManager()
+    @StateObject private var authViewModel = AuthViewModel()
     
     var body: some Scene {
         WindowGroup {
                 
                 RootView()
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                    .environmentObject(session)            
+                    .environmentObject(session)
+                    .environmentObject(authViewModel)            
         }
     }
 }

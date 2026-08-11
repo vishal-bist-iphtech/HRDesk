@@ -7,10 +7,12 @@
 
 import SwiftUI
 import Combine
+import CoreData
 
 final class SessionManager: ObservableObject {
     
     @Published var isLoggedIn = false
+    @Published var currentUser: UserEntity?
     
     init() {
         checkSession()
@@ -20,13 +22,15 @@ final class SessionManager: ObservableObject {
         isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
     }
     
-    func login() {
+    func login(with user: UserEntity) {
         UserDefaults.standard.set(true, forKey: "isLoggedIn")
+        currentUser = user
         isLoggedIn = true
     }
     
     func logout() {
         UserDefaults.standard.removeObject(forKey: "isLoggedIn")
+        currentUser = nil
         isLoggedIn = false
     }
     
