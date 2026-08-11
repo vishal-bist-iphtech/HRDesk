@@ -18,6 +18,11 @@ struct ContentView: View {
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
+            
+            PipelineView()
+                .tabItem {
+                    Label("Pipeline", systemImage: "square.grid.2x2.fill")
+                }
 
             JobsView()
                 .tabItem {
