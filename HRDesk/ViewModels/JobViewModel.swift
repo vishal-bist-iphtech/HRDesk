@@ -19,14 +19,11 @@ final class JobViewModel: ObservableObject {
         fetchJobs()
     }
 
-    // MARK: - Fetch
-
     func fetchJobs() {
 
         jobs = coreDataService.fetchJobs()
     }
 
-    // MARK: - Add
 
     func addJob(
         title: String,
@@ -35,7 +32,8 @@ final class JobViewModel: ObservableObject {
         employmentType: String,
         experience: String,
         salary: String,
-        jobDescription: String
+        jobDescription: String,
+        status: String
     ) {
 
         coreDataService.addJob(
@@ -45,13 +43,12 @@ final class JobViewModel: ObservableObject {
             employmentType: employmentType,
             experience: experience,
             salary: salary,
-            jobDescription: jobDescription
+            jobDescription: jobDescription,
+            status: status
         )
 
         fetchJobs()
     }
-
-    // MARK: - Update
 
     func updateJob(
         _ job: JobEntity,
@@ -61,7 +58,8 @@ final class JobViewModel: ObservableObject {
         employmentType: String,
         experience: String,
         salary: String,
-        jobDescription: String
+        jobDescription: String,
+        status: String
     ) {
 
         coreDataService.updateJob(
@@ -72,13 +70,25 @@ final class JobViewModel: ObservableObject {
             employmentType: employmentType,
             experience: experience,
             salary: salary,
-            jobDescription: jobDescription
+            jobDescription: jobDescription,
+            status: status
         )
 
         fetchJobs()
     }
 
-    // MARK: - Delete
+    func updateJobStatus(
+        _ job: JobEntity,
+        status: String
+    ) {
+
+        coreDataService.updateJobStatus(
+            job,
+            status: status
+        )
+
+        fetchJobs()
+    }
 
     func deleteJob(_ job: JobEntity) {
 
