@@ -23,12 +23,19 @@ struct EditJobView: View {
     @State private var experience: String
     @State private var salary: String
     @State private var description: String
+    @State private var status: String
 
     private let employmentTypes = [
         "Full Time",
         "Part Time",
         "Contract",
         "Internship"
+    ]
+
+    private let statuses = [
+        "Open",
+        "On Hold",
+        "Closed"
     ]
 
     init(job: JobEntity) {
@@ -41,6 +48,7 @@ struct EditJobView: View {
         _experience = State(initialValue: job.experience ?? "")
         _salary = State(initialValue: job.salaryRange ?? "")
         _description = State(initialValue: job.jd ?? "")
+        _status = State(initialValue: job.status ?? "Open")
     }
 
     var body: some View {
@@ -61,6 +69,15 @@ struct EditJobView: View {
 
                 TextField("Experience Required", text: $experience)
                 TextField("Expected Salary", text: $salary)
+            }
+
+            Section("Status") {
+
+                Picker("Job Status", selection: $status) {
+                    ForEach(statuses, id: \.self) {
+                        Text($0)
+                    }
+                }
             }
 
             Section("Job Description") {
@@ -95,7 +112,8 @@ struct EditJobView: View {
             employmentType: employmentType,
             experience: experience,
             salary: salary,
-            jobDescription: description
+            jobDescription: description,
+            status: status
         )
 
         dismiss()

@@ -63,6 +63,19 @@ struct JobDetailView: View {
                             .opacity(0.12)
                     )
                     .clipShape(Capsule())
+
+                    Text(job.statusTitle)
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(
+                            job.statusColor
+                        )
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            job.statusColor.opacity(0.12)
+                        )
+                        .clipShape(Capsule())
                 }
 
                 Divider()
@@ -102,6 +115,13 @@ struct JobDetailView: View {
                         icon: "person.2",
                         title: "Employment Type",
                         value: job.employmentType ?? "Not specified"
+                    )
+
+                    detailRow(
+                        icon: "circle.circle.fill",
+                        title: "Status",
+                        value: job.statusTitle,
+                        valueColor: job.statusColor
                     )
                 }
 
@@ -193,7 +213,8 @@ struct JobDetailView: View {
     private func detailRow(
         icon: String,
         title: String,
-        value: String
+        value: String,
+        valueColor: Color = .primary
     ) -> some View {
 
         HStack(spacing: 14) {
@@ -231,7 +252,9 @@ struct JobDetailView: View {
                         .subheadline.weight(.medium)
                     )
                     .foregroundStyle(
-                        Color("textPrimary")
+                        valueColor == .primary
+                        ? Color("textPrimary")
+                        : valueColor
                     )
             }
 

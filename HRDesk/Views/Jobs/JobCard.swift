@@ -37,22 +37,39 @@ struct JobCard: View {
                 
                 Spacer()
                 
-                Text(
-                    job.employmentType ?? "Full Time"
-                )
-                .font(.caption2)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(
-                    Color("textSecondary")
-                        .opacity(0.12)
-                )
-                .foregroundStyle(
-                    Color("textSecondary")
-                )
-                .clipShape(
-                    Capsule()
-                )
+                HStack(spacing: 6) {
+
+                    Text(
+                        job.employmentType ?? "Full Time"
+                    )
+                    .font(.caption2)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        Color("textSecondary")
+                            .opacity(0.12)
+                    )
+                    .foregroundStyle(
+                        Color("textSecondary")
+                    )
+                    .clipShape(
+                        Capsule()
+                    )
+
+                    Text(job.statusTitle)
+                        .font(.caption2)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(
+                            job.statusColor.opacity(0.12)
+                        )
+                        .foregroundStyle(
+                            job.statusColor
+                        )
+                        .clipShape(
+                            Capsule()
+                        )
+                }
             }
             
             HStack(spacing: 12) {

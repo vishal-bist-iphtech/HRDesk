@@ -20,12 +20,19 @@ struct AddJobView: View {
     @State private var experience = ""
     @State private var salary = ""
     @State private var description = ""
-    
+    @State private var status = "Open"
+
     private let employementTypes = [
         "Full Time",
         "Part Time",
         "Contract",
         "Internship"
+    ]
+
+    private let statuses = [
+        "Open",
+        "On Hold",
+        "Closed"
     ]
     
     var body: some View {
@@ -47,6 +54,15 @@ struct AddJobView: View {
                 TextField("Experience Required", text: $experience)
                 TextField("Expected Salary", text: $salary)
                     .keyboardType(.numberPad)
+            }
+
+            Section("Status") {
+
+                Picker("Job Status", selection: $status) {
+                    ForEach(statuses, id: \.self) {
+                        Text($0)
+                    }
+                }
             }
             
             Section("Job Description") {
@@ -81,7 +97,8 @@ struct AddJobView: View {
             employmentType: employementType,
             experience: experience,
             salary: salary,
-            jobDescription: description
+            jobDescription: description,
+            status: status
         )
 
         dismiss()
