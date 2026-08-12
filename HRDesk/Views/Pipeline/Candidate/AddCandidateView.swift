@@ -51,14 +51,7 @@ struct AddCandidateView: View {
                     .keyboardType(.phonePad)
             }
 
-            Section("Pipeline") {
-
-                Picker("Stage", selection: $stage) {
-
-                    ForEach(PipelineStage.allCases, id: \.self) { stage in
-                        Text(stage.title).tag(stage)
-                    }
-                }
+            Section("Match Score") {
 
                 VStack(
                     alignment: .leading,
@@ -67,7 +60,7 @@ struct AddCandidateView: View {
 
                     HStack {
 
-                        Text("Match Score")
+                        Text("Score")
                             .font(.subheadline)
 
                         Spacer()
