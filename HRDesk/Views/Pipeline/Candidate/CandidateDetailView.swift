@@ -11,7 +11,11 @@ struct CandidateDetailView: View {
 
     let candidate: Candidate
 
+    @EnvironmentObject private var candidateViewModel: CandidateViewModel
+    @Environment(\.dismiss) private var dismiss
+
     @State private var selectedTab = CandidateDetailTab.overview
+    @State private var showDeleteConfirmation = false
 
     var body: some View {
 
@@ -53,8 +57,54 @@ struct CandidateDetailView: View {
 
                     Image(systemName: "square.and.arrow.up")
                 }
+
+                Button(role: .destructive) {
+
+                    showDeleteConfirmation = true
+
+                } label: {
+
+                    Image(systemName: "trash")
+                }
             }
         }
+        .confirmationDialog(
+            "Delete \(candidate.name)?",
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+
+            Button(
+                "Delete",
+                role: .destructive
+            ) {
+
+                candidateViewModel.deleteCandidate(
+                    candidate
+                )
+
+                dismiss()
+            }
+
+            Button(
+                "Cancel",
+                role: .cancel
+            ) {}
+        }
+    }
+
+    private var nextStage: PipelineStage? {
+
+        let stages = PipelineStage.allCases
+
+        guard let index = stages.firstIndex(
+            of: candidate.stage
+        ),
+        stages.indices.contains(index + 1) else {
+            return nil
+        }
+
+        return stages[index + 1]
     }
 }
 
@@ -65,9 +115,8 @@ extension CandidateDetailView {
         HStack(spacing: 12) {
 
             AvatarView(
-                candidate: candidate,
-                size: 76,
-                showFavoriteBadge: true
+                name: candidate.name,
+                size: 76
             )
 
             VStack(
@@ -203,24 +252,12 @@ extension CandidateDetailView {
 
             VStack(
                 alignment: .leading,
-                spacing: 6
+                spacing: 12
             ) {
-
-                Text("About")
-                    .font(.headline)
-                    .foregroundStyle(Color("textPrimary"))
 
                 Text(candidate.about)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-            }
-
-            Divider()
-
-            VStack(
-                alignment: .leading,
-                spacing: 12
-            ) {
 
                 detailInfo(
                     icon: "mappin.and.ellipse",
@@ -243,8 +280,8 @@ extension CandidateDetailView {
                 )
 
                 detailInfo(
-                    icon: "link",
-                    text: "LinkedIn Profile"
+                    icon: "briefcase.fill",
+                    text: candidate.employmentType
                 )
             }
         }
@@ -385,10 +422,10 @@ extension CandidateDetailView {
     private var activityContent: some View {
 
         ContentUnavailableView(
-            "No Recent Activity",
+            "No Resume Added",
             systemImage: "clock",
             description: Text(
-                "Candidate activity will appear here."
+                "Candidate resume will appear here."
             )
         )
     }
@@ -402,12 +439,21 @@ extension CandidateDetailView {
 
             Button {
 
-                // Move candidate to next stage
+                guard let nextStage else {
+                    return
+                }
+
+                candidateViewModel.moveToStage(
+                    candidate,
+                    stage: nextStage
+                )
 
             } label: {
 
                 Label(
-                    "Move Stage",
+                    nextStage == nil
+                    ? "Move Stage"
+                    : "Move to \(nextStage?.title ?? "stage")",
                     systemImage: "arrow.right"
                 )
                 .font(
@@ -437,6 +483,8 @@ extension CandidateDetailView {
                     )
                 }
             }
+            .disabled(nextStage == nil)
+            .opacity(nextStage == nil ? 0.4 : 1)
 
             Button {
 

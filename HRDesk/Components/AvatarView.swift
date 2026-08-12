@@ -9,70 +9,19 @@ import SwiftUI
 
 struct AvatarView: View {
 
-    let candidate: Candidate
+    let name: String
     var size: CGFloat = 48
-    var showFavoriteBadge = false
 
-    var body: some View {
+    private var initials: String {
 
-        ZStack(alignment: .bottomTrailing) {
-
-            AsyncImage(
-                url: URL(string: candidate.avatarURL)
-            ) { phase in
-
-                switch phase {
-
-                case .success(let image):
-
-                    image
-                        .resizable()
-                        .scaledToFill()
-
-                case .failure, .empty:
-
-                    fallback
-
-                @unknown default:
-
-                    fallback
-                }
-            }
-            .frame(
-                width: size,
-                height: size
-            )
-            .clipShape(Circle())
-
-            if showFavoriteBadge,
-               candidate.isFavorite {
-
-                Image(systemName: "star.fill")
-                    .font(
-                        .system(size: size * 0.22, weight: .bold)
-                    )
-                    .foregroundStyle(.yellow)
-                    .background(
-                        Circle()
-                            .fill(.white)
-                            .frame(
-                                width: size * 0.34,
-                                height: size * 0.34
-                            )
-                    )
-                    .offset(
-                        x: size * 0.05,
-                        y: size * 0.05
-                    )
-            }
-        }
-        .frame(
-            width: size,
-            height: size
-        )
+        name.split(separator: " ")
+            .prefix(2)
+            .compactMap { $0.first }
+            .map(String.init)
+            .joined()
     }
 
-    private var fallback: some View {
+    var body: some View {
 
         ZStack {
 
@@ -82,7 +31,7 @@ struct AvatarView: View {
                         .opacity(0.14)
                 )
 
-            Text(candidate.initials)
+            Text(initials)
                 .font(
                     .system(size: size * 0.32, weight: .semibold)
                 )
@@ -90,13 +39,16 @@ struct AvatarView: View {
                     Color("textSecondary")
                 )
         }
+        .frame(
+            width: size,
+            height: size
+        )
     }
 }
 
 #Preview {
-    AvatarView(
-        candidate: Candidate.samples[0],
-        size: 72,
-        showFavoriteBadge: true
-    )
+    HStack(spacing: 12) {
+        AvatarView(name: "Sophia Carter", size: 48)
+        AvatarView(name: "Noah Williams", size: 72)
+    }
 }
