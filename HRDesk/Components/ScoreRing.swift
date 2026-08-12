@@ -15,15 +15,22 @@ struct ScoreRing: View {
     var showsPercent = false
 
     private var color: Color {
-
-        if score >= 85 {
+        
+        if score >= 95 {
             return .green
         }
 
-        if score >= 70 {
-            return .orange
+        if score >= 85 {
+            return .green.opacity(0.9)
         }
 
+        if score >= 70 {
+            return .green.opacity(0.7)
+        }
+        
+        if score >= 60{
+            return .orange
+        }
         return .red
     }
 
@@ -52,13 +59,17 @@ struct ScoreRing: View {
                 .rotationEffect(.degrees(-90))
 
             if showsPercent {
-
-                Text("\(score)%")
-                    .font(
-                        .system(size: size * 0.30, weight: .bold)
-                    )
-                    .foregroundStyle(color)
-
+                VStack(spacing: 0){
+                    
+                    Text("\(score)%")
+                        .font(
+                            .system(size: size * 0.30, weight: .bold)
+                        )
+                    
+                    Text("Match")
+                    .font(.system(size: size * 0.20, weight: .bold))
+                }                
+                .foregroundStyle(color)
             } else {
 
                 VStack(spacing: 0) {
@@ -85,7 +96,7 @@ struct ScoreRing: View {
 
 #Preview {
     HStack(spacing: 16) {
-        ScoreRing(score: 92)
+        ScoreRing(score: 95)
         ScoreRing(score: 76)
         ScoreRing(score: 68)
         ScoreRing(score: 95, size: 64, lineWidth: 4, showsPercent: true)
