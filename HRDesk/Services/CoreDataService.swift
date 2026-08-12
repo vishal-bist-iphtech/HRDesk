@@ -31,9 +31,11 @@ final class CoreDataService {
         do {
             try context.save()
         } catch {
+            let nsError = error as NSError
             print(
                 "Core Data Save Error:",
-                error.localizedDescription
+                nsError,
+                nsError.userInfo
             )
         }
     }
@@ -114,7 +116,8 @@ final class CoreDataService {
         employmentType: String,
         experience: String,
         salary: String,
-        jobDescription: String
+        jobDescription: String,
+        status: String = "Open"
     ) {
 
         let job = JobEntity(context: context)
@@ -127,6 +130,7 @@ final class CoreDataService {
         job.experience = experience
         job.salaryRange = salary
         job.jd = jobDescription
+        job.status = status
         job.createdAt = Date()
         job.isActive = true
 
@@ -165,7 +169,8 @@ final class CoreDataService {
         employmentType: String,
         experience: String,
         salary: String,
-        jobDescription: String
+        jobDescription: String,
+        status: String
     ) {
 
         job.title = title
@@ -175,6 +180,17 @@ final class CoreDataService {
         job.experience = experience
         job.salaryRange = salary
         job.jd = jobDescription
+        job.status = status
+
+        saveContext()
+    }
+
+    func updateJobStatus(
+        _ job: JobEntity,
+        status: String
+    ) {
+
+        job.status = status
 
         saveContext()
     }
@@ -383,4 +399,117 @@ final class CoreDataService {
             return 0
         }
     }
+
+    // MARK: - Candidates
+
+    func addCandidate(
+        fullName: String,
+        role: String,
+        email: String,
+        phone: String,
+        stage: PipelineStage,
+        experience: String,
+        matchScore: Int,
+        appliedDate: String,
+        resume: Data?,
+        job: JobEntity?
+    ) {
+
+        let candidate = CandidateEntity(context: context)
+
+        candidate.id = UUID()
+        candidate.fullName = fullName
+        candidate.role = role
+        candidate.email = email
+        candidate.phone = phone
+        candidate.status = stage.rawValue
+        candidate.experience = experience
+        candidate.matchScore = Int64(matchScore)
+        candidate.appliedDate = appliedDate
+        candidate.job = job
+        candidate.resumeData = resume ?? Data()
+        candidate.createdAt = Date()
+
+        saveContext()
+    }
+
+    func updateCandidate(
+        id: UUID,
+        fullName: String,
+        role: String,
+        email: String,
+        phone: String,
+        stage: PipelineStage,
+        experience: String,
+        matchScore: Int,
+        appliedDate: String,
+        resume: Data?
+    ) {
+
+        guard let candidate = candidate(withID: id) else {
+            return
+        }
+
+        candidate.fullName = fullName
+        candidate.role = role
+        candidate.email = email
+        candidate.phone = phone
+        candidate.status = stage.rawValue
+        candidate.experience = experience
+        candidate.matchScore = Int64(matchScore)
+        candidate.appliedDate = appliedDate
+        candidate.resumeData = resume ?? candidate.resumeData
+
+        saveContext()
+    }
+
+    func updateCandidateStage(
+        id: UUID,
+        stage: PipelineStage
+    ) {
+
+        guard let candidate = candidate(withID: id) else {
+            return
+        }
+
+        candidate.status = stage.rawValue
+
+        saveContext()
+    }
+
+    func deleteCandidate(id: UUID) {
+
+        guard let candidate = candidate(withID: id) else {
+            return
+        }
+
+        context.delete(candidate)
+
+        saveContext()
+    }
+
+    private func candidate(withID id: UUID) -> CandidateEntity? {
+
+        let request: NSFetchRequest<CandidateEntity> =
+            CandidateEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            id as CVarArg
+        )
+
+        request.fetchLimit = 1
+
+        do {
+            return try context.fetch(request).first
+        } catch {
+            print(
+                "Failed to find candidate:",
+                error.localizedDescription
+            )
+
+            return nil
+        }
+    }
+
 }
