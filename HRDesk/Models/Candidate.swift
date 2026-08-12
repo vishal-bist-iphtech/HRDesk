@@ -9,22 +9,18 @@ import Foundation
 
 struct Candidate: Identifiable {
 
-    let id = UUID()
+    let id: UUID
 
     let name: String
     let role: String
     let stage: PipelineStage
     let experience: String
-    let location: String
-    let employmentType: String
     let matchScore: Int
     let appliedDate: String
-    let avatarURL: String
-    let isFavorite: Bool
-    let about: String
     let email: String
     let phone: String
-    let website: String
+    let jobID: UUID?
+    let hasResume: Bool
 
     var initials: String {
 
@@ -35,91 +31,65 @@ struct Candidate: Identifiable {
             .joined()
     }
 
-    static let samples: [Candidate] = [
+    var about: String {
+        "A passionate \(role) with \(experience). Known for strong product thinking, cross-functional collaboration, and delivering high-quality, user-centered solutions."
+    }
 
-        Candidate(
-            name: "Sophia Carter",
-            role: "Product Designer",
-            stage: .applied,
-            experience: "3 Yrs Exp",
-            location: "San Francisco, CA",
-            employmentType: "Full-time",
-            matchScore: 92,
-            appliedDate: "2 days ago",
-            avatarURL: "https://randomuser.me/api/portraits/women/44.jpg",
-            isFavorite: true,
-            about: "Creative Product Designer with 3+ years of experience designing thoughtful digital experiences for web and mobile applications.",
-            email: "sophia.carter@gmail.com",
-            phone: "(415) 123-4567",
-            website: "sofia-carter.com"
-        ),
+    var location: String {
+        "San Francisco, CA"
+    }
 
-        Candidate(
-            name: "Liam Anderson",
-            role: "Product Designer",
-            stage: .screening,
-            experience: "4 Yrs Exp",
-            location: "New York, NY",
-            employmentType: "Full-time",
-            matchScore: 88,
-            appliedDate: "1 day ago",
-            avatarURL: "https://randomuser.me/api/portraits/men/32.jpg",
-            isFavorite: false,
-            about: "Product designer focused on user-centered experiences and scalable design systems.",
-            email: "liam.anderson@gmail.com",
-            phone: "(212) 555-1234",
-            website: "liam-anderson.design"
-        ),
+    var website: String {
+        "https://www.\(name.lowercased().replacingOccurrences(of: " ", with: "-")).com"
+    }
 
-        Candidate(
-            name: "Olivia Bennett",
-            role: "Product Designer",
-            stage: .interview,
-            experience: "5 Yrs Exp",
-            location: "Austin, TX",
-            employmentType: "Full-time",
-            matchScore: 76,
-            appliedDate: "5 days ago",
-            avatarURL: "https://randomuser.me/api/portraits/women/65.jpg",
-            isFavorite: true,
-            about: "Experienced designer with a strong background in product strategy and interaction design.",
-            email: "olivia.bennett@gmail.com",
-            phone: "(512) 555-4567",
-            website: "olivia-bennett.io"
-        ),
+    var employmentType: String {
+        "Full-time"
+    }
 
-        Candidate(
-            name: "Noah Williams",
-            role: "Product Designer",
-            stage: .offer,
-            experience: "6 Yrs Exp",
-            location: "Remote",
-            employmentType: "Full-time",
-            matchScore: 95,
-            appliedDate: "2 days ago",
-            avatarURL: "https://randomuser.me/api/portraits/men/75.jpg",
-            isFavorite: false,
-            about: "Senior product designer specializing in digital products and cross-functional collaboration.",
-            email: "noah.williams@gmail.com",
-            phone: "(555) 555-7890",
-            website: "noahwilliams.studio"
-        ),
+    init(
+        id: UUID,
+        name: String,
+        role: String,
+        stage: PipelineStage,
+        experience: String,
+        matchScore: Int,
+        appliedDate: String,
+        email: String,
+        phone: String,
+        jobID: UUID?,
+        hasResume: Bool
+    ) {
 
-        Candidate(
-            name: "Ava Thompson",
-            role: "Product Designer",
-            stage: .applied,
-            experience: "2 Yrs Exp",
-            location: "Chicago, IL",
-            employmentType: "Full-time",
-            matchScore: 68,
-            appliedDate: "1 day ago",
-            avatarURL: "https://randomuser.me/api/portraits/women/68.jpg",
-            isFavorite: false,
-            about: "Product designer passionate about creating simple and accessible user experiences.",
-            email: "ava.thompson@gmail.com",
-            phone: "(312) 555-6789",
-            website: "avathompson.art"
+        self.id = id
+        self.name = name
+        self.role = role
+        self.stage = stage
+        self.experience = experience
+        self.matchScore = matchScore
+        self.appliedDate = appliedDate
+        self.email = email
+        self.phone = phone
+        self.jobID = jobID
+        self.hasResume = hasResume
+    }
+
+    init(entity: CandidateEntity) {
+
+        self.init(
+            id: entity.id ?? UUID(),
+            name: entity.fullName ?? "",
+            role: entity.role ?? "",
+            stage: PipelineStage(
+                rawValue: entity.status ?? ""
+            ) ?? .applied,
+            experience: entity.experience ?? "",
+            matchScore: Int(entity.matchScore),
+            appliedDate: entity.appliedDate ?? "",
+            email: entity.email ?? "",
+            phone: entity.phone ?? "",
+            jobID: entity.job?.id,
+            hasResume: (entity.resumeData?.isEmpty == false)
         )
-    ]
+    }
 }

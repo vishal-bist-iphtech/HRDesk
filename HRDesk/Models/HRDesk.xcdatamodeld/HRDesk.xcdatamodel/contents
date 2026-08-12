@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24902" systemVersion="25F84" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CandidateEntity" representedClassName="CandidateEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="appliedDate" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="email" attributeType="String"/>
+        <attribute name="experience" optional="YES" attributeType="String"/>
         <attribute name="fullName" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="matchScore" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="phone" attributeType="String"/>
         <attribute name="resumeData" attributeType="Binary"/>
+        <attribute name="role" optional="YES" attributeType="String"/>
         <attribute name="status" attributeType="String"/>
+        <relationship name="job" optional="YES" maxCount="1" deletionRule="No Action" destinationEntity="JobEntity" inverseName="candidates" inverseEntity="JobEntity"/>
     </entity>
     <entity name="EmployeeEntity" representedClassName="EmployeeEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -31,7 +36,9 @@
         <attribute name="jd" attributeType="String"/>
         <attribute name="location" attributeType="String"/>
         <attribute name="salaryRange" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
+        <relationship name="candidates" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="CandidateEntity" inverseName="job" inverseEntity="CandidateEntity"/>
     </entity>
     <entity name="TodoEntity" representedClassName="TodoEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
