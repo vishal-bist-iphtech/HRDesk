@@ -14,6 +14,7 @@ enum PipelineStage: String, CaseIterable {
     case interview
     case offer
     case hired
+    case rejected
 
     var title: String {
 
@@ -33,6 +34,9 @@ enum PipelineStage: String, CaseIterable {
 
         case .hired:
             return "Hired"
+
+        case .rejected:
+            return "Rejected"
         }
     }
 
@@ -54,6 +58,9 @@ enum PipelineStage: String, CaseIterable {
 
         case .hired:
             return "checkmark.circle"
+
+        case .rejected:
+            return "xmark.circle"
         }
     }
 
@@ -75,6 +82,9 @@ enum PipelineStage: String, CaseIterable {
 
         case .hired:
             return .green
+
+        case .rejected:
+            return .red
         }
     }
 }

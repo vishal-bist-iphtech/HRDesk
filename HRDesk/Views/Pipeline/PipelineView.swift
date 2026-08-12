@@ -10,30 +10,46 @@ import SwiftUI
 struct PipelineView: View {
 
     @EnvironmentObject var jobViewModel: JobViewModel
+    @StateObject var candidateViewModel = CandidateViewModel()
 
     @State var selectedJobIndex = 0
-    @State var selectedStage = PipelineStage.applied
     @State var searchText = ""
     @State var isSearching = false
     @State var sortAscending = false
+    @State var showAddCandidate = false
+    @State var editingCandidate: Candidate?
+    @State var isKanban = false
+    @State var newCandidateStage: PipelineStage = .applied
 
-    let candidates = Candidate.samples
+    var selectedJobEntity: JobEntity? {
+
+        if jobViewModel.jobs.indices.contains(selectedJobIndex) {
+            return jobViewModel.jobs[selectedJobIndex]
+        }
+
+        return nil
+    }
 
     var selectedJob: String {
 
-        if jobViewModel.jobs.indices.contains(selectedJobIndex) {
-            return jobViewModel.jobs[selectedJobIndex].title
-                ?? "Product Designer"
+        selectedJobEntity?.title
+            ?? "Product Designer"
+    }
+
+    var selectedJobCandidates: [Candidate] {
+
+        guard let selectedJobEntity else {
+            return candidateViewModel.candidates
         }
 
-        return "Product Designer"
+        return candidateViewModel.candidates.filter {
+            $0.jobID == selectedJobEntity.id
+        }
     }
 
     var filteredCandidates: [Candidate] {
 
-        var result = candidates.filter {
-            $0.stage == selectedStage
-        }
+        var result = selectedJobCandidates
 
         if !searchText.isEmpty {
             result = result.filter {
@@ -56,22 +72,30 @@ struct PipelineView: View {
 
             ScrollView(showsIndicators: false) {
 
-                VStack(
-                    alignment: .leading,
-                    spacing: 16
-                ) {
+                VStack(alignment: .leading, spacing: 16) {
 
                     header
-                    Spacer()
-                    stageSelector
 
-                    filterRow
+                    if isKanban {
 
-                    if isSearching {
                         searchField
-                    }
 
-                    candidateList
+                        kanbanBoard
+
+                    } else {
+
+                        Spacer()
+
+                        stageSelector
+
+                        filterRow
+
+                        if isSearching {
+                            searchField
+                        }
+
+                        candidateList
+                    }
                 }
                 .padding()
             }
@@ -79,7 +103,38 @@ struct PipelineView: View {
                     .ignoresSafeArea()
             )
             .navigationBarHidden(true)
+            .sheet(
+                isPresented: $showAddCandidate
+            ) {
+
+                NavigationStack {
+
+                    AddCandidateView(
+                        defaultJob: selectedJobEntity,
+                        defaultStage: newCandidateStage
+                    )
+                }
+                .environmentObject(candidateViewModel)
+            }
+            .sheet(
+                item: $editingCandidate
+            ) { candidate in
+
+                NavigationStack {
+
+                    EditCandidateView(
+                        candidate: candidate
+                    )
+                }
+                .environmentObject(candidateViewModel)
+            }
+            .onAppear {
+
+                jobViewModel.fetchJobs()
+                candidateViewModel.fetchCandidates()
+            }
         }
+        .environmentObject(candidateViewModel)
     }
 }
 
