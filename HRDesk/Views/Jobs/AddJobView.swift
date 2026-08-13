@@ -22,18 +22,6 @@ struct AddJobView: View {
     @State private var description = ""
     @State private var status = "Open"
 
-    private let employementTypes = [
-        "Full Time",
-        "Part Time",
-        "Contract",
-        "Internship"
-    ]
-
-    private let statuses = [
-        "Open",
-        "On Hold",
-        "Closed"
-    ]
     
     var body: some View {
         
@@ -46,7 +34,7 @@ struct AddJobView: View {
                 TextField("Location", text: $location)
 
                 Picker("Employement Type", selection: $employementType) {
-                    ForEach(employementTypes, id: \.self) {
+                    ForEach(employmentTypes, id: \.self) {
                         Text($0)
                     }
                 }

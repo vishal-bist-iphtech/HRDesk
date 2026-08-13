@@ -12,63 +12,36 @@ struct JobCard: View {
     
     var body: some View {
         
-        VStack(
-            alignment: .leading,
-            spacing: 10
-        ) {
+        VStack(alignment: .leading, spacing: 10) {
             
-            HStack(
-                alignment: .top
-            ) {
+            HStack(alignment: .top) {
                 
-                VStack(
-                    alignment: .leading,
-                    spacing: 4
-                ) {
+                VStack(alignment: .leading, spacing: 4) {
                     
-                    Text(
-                        job.title ?? "Untitled"
-                    )
+                    Text(job.title ?? "Untitled")
                     .font(.headline)
-                    .foregroundStyle(
-                        Color("textPrimary")
-                    )
+                    .foregroundStyle(Color("textPrimary"))
                 }
                 
                 Spacer()
                 
                 HStack(spacing: 6) {
 
-                    Text(
-                        job.employmentType ?? "Full Time"
-                    )
+                    Text(job.employmentType ?? "Full Time")
                     .font(.caption2)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
-                    .background(
-                        Color("textSecondary")
-                            .opacity(0.12)
-                    )
-                    .foregroundStyle(
-                        Color("textSecondary")
-                    )
-                    .clipShape(
-                        Capsule()
-                    )
+                    .background(Color("background").opacity(0.12))
+                    .foregroundStyle(Color("background"))
+                    .clipShape(Capsule())
 
                     Text(job.statusTitle)
                         .font(.caption2)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
-                        .background(
-                            job.statusColor.opacity(0.12)
-                        )
-                        .foregroundStyle(
-                            job.statusColor
-                        )
-                        .clipShape(
-                            Capsule()
-                        )
+                        .background(job.statusColor.opacity(0.12))
+                        .foregroundStyle(job.statusColor)
+                        .clipShape(Capsule())
                 }
             }
             
@@ -102,17 +75,8 @@ struct JobCard: View {
             }
         }
         .padding(14)
-        .frame(
-            maxWidth: .infinity,
-            alignment: .leading
-        )
-        .background(
-            Color.gray.opacity(0.06)
-        )
-        .clipShape(
-            RoundedRectangle(
-                cornerRadius: 14
-            )
-        )
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.gray.opacity(0.04))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 }

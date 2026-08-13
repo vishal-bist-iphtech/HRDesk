@@ -67,22 +67,13 @@ struct JobsView: View {
 
                             LazyVStack(spacing: 16) {
 
-                                ForEach(
-                                    filteredJobs,
-                                    id: \.objectID
-                                ) { job in
+                                ForEach(filteredJobs,id: \.objectID) { job in
 
                                     NavigationLink {
-
-                                        JobDetailView(
-                                            job: job
-                                        )
-
+                                        JobDetailView( job: job)
                                     } label: {
 
-                                        JobCard(
-                                            job: job
-                                        )
+                                        JobCard(job: job)
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -91,8 +82,6 @@ struct JobsView: View {
                         }
                     }
                 }
-
-                // MARK: - Add Job Button
 
                 Button {
 
@@ -108,17 +97,13 @@ struct JobsView: View {
                             height: 60
                         )
                         .background(
-                            Color("textSecondary")
+                            Color("background")
                         )
                         .clipShape(Circle())
                         .shadow(radius: 8)
                 }
                 .padding()
             }
-            .background(
-                Color("background")
-                    .ignoresSafeArea()
-            )
             .searchable(
                 text: $searchText,
                 placement: .navigationBarDrawer,
@@ -131,16 +116,12 @@ struct JobsView: View {
             ) {
 
                 NavigationStack {
-
                     AddJobView()
                 }
-                .environmentObject(
-                    jobViewModel
-                )
+                .environmentObject(jobViewModel)
             }
         }
         .onAppear {
-
             jobViewModel.fetchJobs()
         }
     }

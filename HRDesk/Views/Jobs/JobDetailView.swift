@@ -22,76 +22,44 @@ struct JobDetailView: View {
 
         ScrollView {
 
-            VStack(
-                alignment: .leading,
-                spacing: 20
-            ) {
+            VStack(alignment: .leading, spacing: 20) {
 
-                VStack(
-                    alignment: .leading,
-                    spacing: 8
-                ) {
+                VStack(alignment: .leading, spacing: 8) {
 
-                    Text(
-                        job.title ?? "Untitled Job"
-                    )
-                    .font(
-                        .title2.weight(.bold)
-                    )
-                    .foregroundStyle(
-                        Color("textPrimary")
-                    )
+                    Text(job.title ?? "Untitled Job")
+                    .font(.title2.weight(.bold) )
+                    .foregroundStyle(Color("textPrimary"))
 
-                    Text(
-                        job.department ?? "No Department"
-                    )
+                    Text(job.department ?? "No Department")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
-                    Text(
-                        job.employmentType ?? "Full Time"
-                    )
+                    Text(job.employmentType ?? "Full Time")
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundStyle(
-                        Color("textSecondary")
-                    )
+                    .foregroundStyle(Color("background"))
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(
-                        Color("textSecondary")
-                            .opacity(0.12)
-                    )
+                    .background(Color("background").opacity(0.12))
                     .clipShape(Capsule())
 
                     Text(job.statusTitle)
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundStyle(
-                            job.statusColor
-                        )
+                        .foregroundStyle(job.statusColor)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(
-                            job.statusColor.opacity(0.12)
-                        )
+                        .background( job.statusColor.opacity(0.12))
                         .clipShape(Capsule())
                 }
 
                 Divider()
 
-                // MARK: - Job Information
-
-                VStack(
-                    alignment: .leading,
-                    spacing: 14
-                ) {
+                VStack(alignment: .leading, spacing: 14) {
 
                     Text("Job Information")
                         .font(.headline)
-                        .foregroundStyle(
-                            Color("textPrimary")
-                        )
+                        .foregroundStyle(Color("textPrimary"))
 
                     detailRow(
                         icon: "mappin.and.ellipse",
@@ -125,46 +93,29 @@ struct JobDetailView: View {
                     )
                 }
 
-                // MARK: - Job Description
-
                 if let jd = job.jd,
-                   !jd.trimmingCharacters(
-                       in: .whitespacesAndNewlines
-                   ).isEmpty {
+                   !jd.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
 
-                    VStack(
-                        alignment: .leading,
-                        spacing: 10
-                    ) {
+                    VStack(alignment: .leading, spacing: 10) {
 
                         Text("Job Description")
                             .font(.headline)
-                            .foregroundStyle(
-                                Color("textPrimary")
-                            )
+                            .foregroundStyle( Color("textPrimary"))
 
                         Text(jd)
                             .font(.body)
-                            .foregroundStyle(
-                                Color("textPrimary")
-                            )
+                            .foregroundStyle(Color("textPrimary"))
                             .lineSpacing(4)
                     }
                 }
             }
             .padding()
         }
-        .background(
-            Color("background")
-                .ignoresSafeArea()
-        )
         .navigationTitle("Job Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
 
-            ToolbarItemGroup(
-                placement: .topBarTrailing
-            ) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
 
                 NavigationLink {
 
@@ -185,30 +136,20 @@ struct JobDetailView: View {
                 }
             }
         }
-        .confirmationDialog(
-            "Delete this job?",
-            isPresented: $showDeleteConfirmation,
+        .confirmationDialog("Delete this job?", isPresented: $showDeleteConfirmation,
             titleVisibility: .visible
         ) {
 
-            Button(
-                "Delete",
-                role: .destructive
-            ) {
+            Button( "Delete", role: .destructive) {
 
                 jobViewModel.deleteJob(job)
 
                 dismiss()
             }
 
-            Button(
-                "Cancel",
-                role: .cancel
-            ) {}
+            Button("Cancel", role: .cancel) {}
         }
     }
-
-    // MARK: - Detail Row
 
     private func detailRow(
         icon: String,
@@ -221,36 +162,19 @@ struct JobDetailView: View {
 
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(
-                    Color("textSecondary")
-                )
-                .frame(
-                    width: 34,
-                    height: 34
-                )
-                .background(
-                    Color("textSecondary")
-                        .opacity(0.10)
-                )
-                .clipShape(
-                    RoundedRectangle(
-                        cornerRadius: 9
-                    )
-                )
+                .foregroundStyle(Color("background"))
+                .frame(width: 34, height: 34)
+                .background(Color("background").opacity(0.10))
+                .clipShape(RoundedRectangle(cornerRadius: 9))
 
-            VStack(
-                alignment: .leading,
-                spacing: 2
-            ) {
+            VStack(alignment: .leading, spacing: 2) {
 
                 Text(title)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
                 Text(value)
-                    .font(
-                        .subheadline.weight(.medium)
-                    )
+                    .font(.subheadline.weight(.medium))
                     .foregroundStyle(
                         valueColor == .primary
                         ? Color("textPrimary")
@@ -265,13 +189,21 @@ struct JobDetailView: View {
 
 #Preview {
 
-    NavigationStack {
+    let context = PersistenceController.preview.container.viewContext
+    let job = JobEntity(context: context)
+    job.title = "Senior iOS Engineer"
+    job.department = "Engineering"
+    job.location = "Bengaluru"
+    job.employmentType = "Full Time"
+    job.experience = "3-5 Years"
+    job.salaryRange = "₹18-25 LPA"
+    job.jd = "Build and own HRDesk's core features."
+    job.status = "Open"
+    job.createdAt = Date()
+    job.isActive = true
 
-        JobDetailView(
-            job: JobEntity()
-        )
-        .environmentObject(
-            JobViewModel()
-        )
+    return NavigationStack {
+        JobDetailView(job: job)
+            .environmentObject(JobViewModel())
     }
 }

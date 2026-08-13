@@ -25,19 +25,6 @@ struct EditJobView: View {
     @State private var description: String
     @State private var status: String
 
-    private let employmentTypes = [
-        "Full Time",
-        "Part Time",
-        "Contract",
-        "Internship"
-    ]
-
-    private let statuses = [
-        "Open",
-        "On Hold",
-        "Closed"
-    ]
-
     init(job: JobEntity) {
         self.job = job
 
@@ -50,7 +37,8 @@ struct EditJobView: View {
         _description = State(initialValue: job.jd ?? "")
         _status = State(initialValue: job.status ?? "Open")
     }
-
+    
+    
     var body: some View {
 
         Form {
@@ -122,11 +110,21 @@ struct EditJobView: View {
 
 #Preview {
 
-    NavigationStack {
+    let context = PersistenceController.preview.container.viewContext
+    let job = JobEntity(context: context)
+    job.title = "Senior iOS Engineer"
+    job.department = "Engineering"
+    job.location = "Bengaluru"
+    job.employmentType = "Full Time"
+    job.experience = "3-5 Years"
+    job.salaryRange = "₹18-25 LPA"
+    job.jd = "Build and own HRDesk's core features."
+    job.status = "Open"
+    job.createdAt = Date()
+    job.isActive = true
 
-        EditJobView(
-            job: JobEntity()
-        )
-        .environmentObject(JobViewModel())
+    return NavigationStack {
+        EditJobView(job: job)
+            .environmentObject(JobViewModel())
     }
 }
