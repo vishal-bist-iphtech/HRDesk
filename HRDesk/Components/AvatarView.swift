@@ -27,7 +27,7 @@ struct AvatarView: View {
 
             Circle()
                 .fill(
-                    Color("textSecondary")
+                    Color("background")
                         .opacity(0.14)
                 )
 
@@ -36,7 +36,7 @@ struct AvatarView: View {
                     .system(size: size * 0.32, weight: .semibold)
                 )
                 .foregroundStyle(
-                    Color("textSecondary")
+                    Color("background")
                 )
         }
         .frame(

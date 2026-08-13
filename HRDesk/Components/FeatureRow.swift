@@ -16,9 +16,9 @@ struct FeatureRow: View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(Color("textSecondary"))
+                .foregroundStyle(Color("background"))
                 .frame(width: 48, height: 48)
-                .background(Color("textSecondary").opacity(0.12))
+                .background(Color("background").opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
             VStack(alignment: .leading, spacing: 4) {

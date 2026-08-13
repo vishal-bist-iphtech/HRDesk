@@ -20,7 +20,7 @@ struct HRButton: View {
             HStack(spacing: 8) {
                 if isLoading {
                     ProgressView()
-                        .tint(isSecondary ? Color("textSecondary") : .white)
+                        .tint(isSecondary ? Color("background") : .white)
                 }
                 else {
                     Text(title)
@@ -29,11 +29,11 @@ struct HRButton: View {
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(isSecondary ? Color.clear : Color("textSecondary"))
-            .foregroundStyle(isSecondary ? Color("textSecondary") : .white)
+            .background(isSecondary ? Color.clear : Color("background"))
+            .foregroundStyle(isSecondary ? Color("background") : .white)
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .stroke(isSecondary ? Color("textSecondary") : .clear, lineWidth: 1.5)
+                    .stroke(isSecondary ? Color("background") : .clear, lineWidth: 1.5)
             )
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }

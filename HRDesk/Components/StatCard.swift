@@ -26,7 +26,7 @@ struct StatCard: View {
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(tint)
                     .frame(width: 40, height: 40)
-                    .background(tint.opacity(0.04))
+                    .background(tint.opacity(0.2))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             

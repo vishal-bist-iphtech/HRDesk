@@ -19,7 +19,7 @@ struct AuthTextField: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundStyle(Color("textSecondary"))
+                .foregroundStyle(Color("background"))
                 .frame(width: 20)
 
             Group {
