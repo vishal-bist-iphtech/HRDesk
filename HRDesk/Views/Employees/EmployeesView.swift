@@ -9,55 +9,145 @@ import SwiftUI
 
 struct EmployeesView: View {
 
-    private let employees = [
-        ("James Wilson", "Engineering Manager"),
-        ("Nina Rodriguez", "People Operations Lead"),
-        ("Akshay Verma", "Senior Data Analyst")
-    ]
+    @EnvironmentObject private var employeeViewModel: EmployeeViewModel
+
+    @State private var showAddEmployee = false
+    @State private var showingDeleteFor: EmployeeEntity?
+    @State private var searchText = ""
+
+    private var filteredEmployees: [EmployeeEntity] {
+
+        guard !searchText.isEmpty else {
+            return employeeViewModel.employees
+        }
+
+        let query = searchText.lowercased()
+
+        return employeeViewModel.employees.filter { employee in
+
+            let fullName = "\(employee.firstName ?? "") \(employee.lastName ?? "")"
+                .lowercased()
+
+            return fullName.contains(query)
+                || employee.position?.lowercased().contains(query) == true
+                || employee.department?.lowercased().contains(query) == true
+        }
+    }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 14) {
-                    ForEach(employees, id: \.0) { employee in
-                        HStack(spacing: 12) {
-                            Circle()
-                                .fill(Color.green.opacity(0.15))
-                                .frame(width: 44, height: 44)
-                                .overlay(
-                                    Text(employee.0.prefix(1))
-                                        .font(.headline)
-                                        .foregroundStyle(.green)
-                                )
+            
+            ZStack(alignment: .bottomTrailing) {
+                
+                Group {
 
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(employee.0)
-                                    .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(Color("textPrimary"))
-                                Text(employee.1)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                    if employeeViewModel.employees.isEmpty {
+
+                        ContentUnavailableView(
+                            "No Employees",
+                            systemImage: "person.3",
+                            description: Text(
+                                "Tap + to add your first employee."
+                            )
+                        )
+
+                    } else if filteredEmployees.isEmpty {
+
+                        ContentUnavailableView(
+                            "No Results",
+                            systemImage: "magnifyingglass",
+                            description: Text(
+                                "No employees match \"\(searchText)\"."
+                            )
+                        )
+
+                    } else {
+
+                        ScrollView {
+
+                            LazyVStack(spacing: 14) {
+                                ForEach(filteredEmployees, id: \.objectID) { employee in
+                                    EmployeeCard(
+                                        employee: employee,
+                                        onDelete: {
+                                            showingDeleteFor = employee
+                                        }
+                                    )
+                                }
                             }
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundStyle(.tertiary)
+                            .padding()
                         }
-                        .padding(12)
-                        .background(Color.gray.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                }
+                
+                Button {
+
+                    showAddEmployee = true
+
+                } label: {
+
+                    Image(systemName: "plus")
+                        .font(.title2)
+                        .foregroundStyle(.white)
+                        .frame(
+                            width: 60,
+                            height: 60
+                        )
+                        .background(
+                            Color("background")
+                        )
+                        .clipShape(Circle())
+                        .shadow(radius: 8)
                 }
                 .padding()
             }
-            .background(Color("background").ignoresSafeArea())
             .navigationTitle("Employees")
+            .navigationBarTitleDisplayMode(.large)
+            .searchable(
+                text: $searchText,
+                placement: .navigationBarDrawer,
+                prompt: "Search employees"
+            )
+            .sheet(isPresented: $showAddEmployee) {
+
+                NavigationStack {
+                    AddEmployeeView()
+                }
+                .environmentObject(employeeViewModel)
+            }
+            .confirmationDialog(
+                "Delete Employee?",
+                isPresented: Binding(
+                    get: { showingDeleteFor != nil },
+                    set: { if !$0 { showingDeleteFor = nil } }
+                ),
+                titleVisibility: .visible
+            ) {
+
+                Button(
+                    "Delete",
+                    role: .destructive
+                ) {
+                    if let employee = showingDeleteFor {
+                        employeeViewModel.deleteEmployee(employee)
+                    }
+                    showingDeleteFor = nil
+                }
+
+                Button("Cancel", role: .cancel) {
+                    showingDeleteFor = nil
+                }
+            }
+        }
+        .onAppear {
+            employeeViewModel.fetchEmployees()
         }
     }
 }
 
 #Preview {
-    EmployeesView()
+    NavigationStack {
+        EmployeesView()
+            .environmentObject(EmployeeViewModel())
+    }
 }

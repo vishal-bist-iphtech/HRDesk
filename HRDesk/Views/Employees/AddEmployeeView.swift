@@ -11,6 +11,8 @@ struct AddEmployeeView: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    @EnvironmentObject private var employeeViewModel: EmployeeViewModel
+
     @State private var firstName = ""
     @State private var lastName = ""
     @State private var email = ""
@@ -98,7 +100,16 @@ struct AddEmployeeView: View {
 
     private func saveEmployee() {
 
-        // Core Data will be connected here later.
+        employeeViewModel.addEmployee(
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            department: department,
+            position: position,
+            joiningDate: joiningDate,
+            salary: Double(salary) ?? 0
+        )
 
         dismiss()
     }
@@ -109,4 +120,5 @@ struct AddEmployeeView: View {
     NavigationStack {
         AddEmployeeView()
     }
+    .environmentObject(EmployeeViewModel())
 }
