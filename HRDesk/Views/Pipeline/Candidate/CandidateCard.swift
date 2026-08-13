@@ -179,6 +179,8 @@ struct CandidateCard: View {
                 appliedDate: "2 days ago",
                 email: "sophia@gmail.com",
                 phone: "(415) 123-4567",
+                noticePeriod: "30 Days",
+                expectedSalary: "₹15 LPA",
                 jobID: nil,
                 hasResume: true
             )

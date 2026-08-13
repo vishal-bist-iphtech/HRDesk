@@ -21,14 +21,9 @@ struct CandidateDetailView: View {
 
         VStack(spacing: 0) {
 
-            ScrollView(
-                showsIndicators: false
-            ) {
+            ScrollView(showsIndicators: false) {
 
-                VStack(
-                    alignment: .leading,
-                    spacing: 24
-                ) {
+                VStack(alignment: .leading, spacing: 24) {
 
                     candidateHeader
 
@@ -41,10 +36,6 @@ struct CandidateDetailView: View {
 
             bottomActions
         }
-        .background(
-            Color("background")
-                .ignoresSafeArea()
-        )
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -125,12 +116,8 @@ extension CandidateDetailView {
             ) {
 
                 Text(candidate.name)
-                    .font(
-                        .headline.weight(.bold)
-                    )
-                    .foregroundStyle(
-                        Color("textPrimary")
-                    )
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(Color("textPrimary"))
 
                 Text(candidate.role)
                     .font(.subheadline)
@@ -194,14 +181,14 @@ extension CandidateDetailView {
                                 )
                                 .foregroundStyle(
                                     selectedTab == tab
-                                    ? Color("textSecondary")
+                                    ? Color("background")
                                     : .secondary
                                 )
 
                             Rectangle()
                                 .fill(
                                     selectedTab == tab
-                                    ? Color("textSecondary")
+                                    ? Color("background")
                                     : Color.clear
                                 )
                                 .frame(height: 2)
@@ -239,7 +226,7 @@ extension CandidateDetailView {
 
         case .activity:
 
-            activityContent
+            resumeContent
         }
     }
 
@@ -254,10 +241,16 @@ extension CandidateDetailView {
                 alignment: .leading,
                 spacing: 12
             ) {
+                
+                Text("About")
+                    .font(.title3.weight(.medium))
+                    .foregroundStyle(Color("textPrimary").opacity(0.8))
 
                 Text(candidate.about)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                
+                Spacer()
 
                 detailInfo(
                     icon: "mappin.and.ellipse",
@@ -282,6 +275,16 @@ extension CandidateDetailView {
                 detailInfo(
                     icon: "briefcase.fill",
                     text: candidate.employmentType
+                )
+
+                detailInfo(
+                    icon: "clock",
+                    text: candidate.noticePeriod
+                )
+
+                detailInfo(
+                    icon: "indianrupeesign.circle",
+                    text: candidate.expectedSalary
                 )
             }
         }
@@ -311,10 +314,8 @@ extension CandidateDetailView {
         ) {
 
             Text("Experience")
-                .font(.headline)
-                .foregroundStyle(
-                    Color("textPrimary")
-                )
+                .font(.title3.weight(.medium))
+                .foregroundStyle(Color("textPrimary").opacity(0.8))
 
             VStack(
                 alignment: .leading,
@@ -351,7 +352,7 @@ extension CandidateDetailView {
 
                 Circle()
                     .fill(
-                        Color("textSecondary")
+                        Color("background")
                             .opacity(0.5)
                     )
                     .frame(width: 9, height: 9)
@@ -371,25 +372,21 @@ extension CandidateDetailView {
             ) {
 
                 Text(role)
-                    .font(
-                        .subheadline.weight(.semibold)
-                    )
-                    .foregroundStyle(
-                        Color("textPrimary")
-                    )
+                    .font(.headline.weight(.medium))
+                    .foregroundStyle(Color("textPrimary").opacity(0.8))
 
                 Text(company)
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
 
                 Text(period)
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
 
                 Text(
                     "• Designed and shipped new features for the platform.\n• Collaborated with cross-functional teams to improve user experience."
                 )
-                .font(.caption)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .padding(.top, 4)
             }
@@ -398,13 +395,11 @@ extension CandidateDetailView {
 
     private var skillsContent: some View {
 
-        VStack(
-            alignment: .leading,
-            spacing: 12
-        ) {
+        VStack(alignment: .leading, spacing: 12) {
 
             Text("Skills")
-                .font(.headline)
+                .font(.title3.weight(.medium))
+                .foregroundStyle(Color("textPrimary").opacity(0.8))
 
             FlowLayout(
                 items: [
@@ -419,7 +414,7 @@ extension CandidateDetailView {
         }
     }
 
-    private var activityContent: some View {
+    private var resumeContent: some View {
 
         ContentUnavailableView(
             "No Resume Added",
@@ -459,26 +454,17 @@ extension CandidateDetailView {
                 .font(
                     .subheadline.weight(.semibold)
                 )
-                .foregroundStyle(
-                    Color("textSecondary")
-                )
-                .frame(
-                    maxWidth: .infinity
-                )
+                .foregroundStyle(Color("background"))
+                .frame(maxWidth: .infinity)
                 .frame(height: 46)
                 .background(
-                    RoundedRectangle(
-                        cornerRadius: 12
-                    )
+                    RoundedRectangle(cornerRadius: 12)
                     .fill(Color.gray.opacity(0.08))
-                )
-                .overlay {
-                    RoundedRectangle(
-                        cornerRadius: 12
                     )
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
                     .stroke(
-                        Color("textSecondary")
-                            .opacity(0.6),
+                        Color("background").opacity(0.6),
                         lineWidth: 1.5
                     )
                 }
@@ -486,11 +472,7 @@ extension CandidateDetailView {
             .disabled(nextStage == nil)
             .opacity(nextStage == nil ? 0.4 : 1)
 
-            Button {
-
-                // Schedule interview
-
-            } label: {
+            Button { } label: {
 
                 Text("Schedule Interview")
                     .font(
@@ -505,14 +487,11 @@ extension CandidateDetailView {
                         RoundedRectangle(
                             cornerRadius: 12
                         )
-                        .fill(Color("textSecondary"))
+                        .fill(Color("background"))
                     )
             }
         }
         .padding()
-        .background(
-            Color("background")
-        )
     }
 }
 
@@ -529,28 +508,16 @@ extension CandidateDetailView {
                     GridItem(.adaptive(minimum: 100))
                 ],
                 alignment: .leading,
-                spacing: 8
+                spacing: 4
             ) {
 
                 ForEach(items, id: \.self) { item in
 
                     Text(item)
-                        .font(.caption2.weight(.medium))
-                        .padding(
-                            .horizontal,
-                            10
-                        )
-                        .padding(
-                            .vertical,
-                            6
-                        )
-                        .background(
-                            Color("textSecondary")
-                                .opacity(0.08)
-                        )
-                        .foregroundStyle(
-                            Color("textSecondary")
-                        )
+                        .font(.headline.weight(.medium))
+                        .padding(10)
+                        .background(Color("background").opacity(0.08))
+                        .foregroundStyle(Color("background"))
                         .clipShape(Capsule())
                 }
             }

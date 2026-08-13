@@ -23,6 +23,8 @@ struct AddCandidateView: View {
     @State private var phone = ""
     @State private var stage: PipelineStage = .applied
     @State private var experience = ""
+    @State private var noticePeriod = ""
+    @State private var expectedSalary = ""
     @State private var matchScore = 75
     @State private var showFileImporter = false
     @State private var resumeData: Data?
@@ -39,6 +41,10 @@ struct AddCandidateView: View {
                 TextField("Role", text: $role)
 
                 TextField("Experience (e.g. 3 Yrs Exp)", text: $experience)
+
+                TextField("Notice Period (e.g. 30 Days)", text: $noticePeriod)
+
+                TextField("Expected Salary (e.g. ₹15 LPA)", text: $expectedSalary)
             }
 
             Section("Contact Details") {
@@ -67,7 +73,7 @@ struct AddCandidateView: View {
 
                         Text("\(matchScore)%")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Color("textSecondary"))
+                            .foregroundStyle(Color("background"))
                     }
 
                     Slider(
@@ -78,7 +84,7 @@ struct AddCandidateView: View {
                         in: 0...100,
                         step: 1
                     )
-                    .tint(Color("textSecondary"))
+                    .tint(Color("background"))
                 }
             }
 
@@ -114,7 +120,7 @@ struct AddCandidateView: View {
                         }
                     }
                     .foregroundStyle(
-                        Color("textSecondary")
+                        Color("background")
                     )
                 }
             }
@@ -140,7 +146,7 @@ struct AddCandidateView: View {
         .navigationBarTitleDisplayMode(.inline)
         .fileImporter(
             isPresented: $showFileImporter,
-            allowedContentTypes: [.pdf, .plainText],
+            allowedContentTypes: [.pdf],
             allowsMultipleSelection: false
         ) { result in
 
@@ -149,9 +155,7 @@ struct AddCandidateView: View {
             case .success(let urls):
 
                 guard let url = urls.first,
-                      url.startAccessingSecurityScopedResource() else {
-                    return
-                }
+                      url.startAccessingSecurityScopedResource() else {return}
 
                 defer {
                     url.stopAccessingSecurityScopedResource()
@@ -187,6 +191,8 @@ struct AddCandidateView: View {
             stage: stage,
             experience: experience,
             matchScore: matchScore,
+            noticePeriod: noticePeriod,
+            expectedSalary: expectedSalary,
             resume: resumeData,
             job: defaultJob
         )

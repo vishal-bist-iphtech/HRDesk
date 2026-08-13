@@ -22,6 +22,8 @@ struct EditCandidateView: View {
     @State private var phone: String
     @State private var stage: PipelineStage
     @State private var experience: String
+    @State private var noticePeriod: String
+    @State private var expectedSalary: String
     @State private var matchScore: Int
     @State private var showFileImporter = false
     @State private var resumeData: Data?
@@ -37,6 +39,8 @@ struct EditCandidateView: View {
         _phone = State(initialValue: candidate.phone)
         _stage = State(initialValue: candidate.stage)
         _experience = State(initialValue: candidate.experience)
+        _noticePeriod = State(initialValue: candidate.noticePeriod)
+        _expectedSalary = State(initialValue: candidate.expectedSalary)
         _matchScore = State(initialValue: candidate.matchScore)
     }
 
@@ -51,6 +55,10 @@ struct EditCandidateView: View {
                 TextField("Role", text: $role)
 
                 TextField("Experience (e.g. 3 Yrs Exp)", text: $experience)
+
+                TextField("Notice Period (e.g. 30 Days)", text: $noticePeriod)
+
+                TextField("Expected Salary (e.g. ₹15 LPA)", text: $expectedSalary)
             }
 
             Section("Contact Details") {
@@ -86,7 +94,7 @@ struct EditCandidateView: View {
 
                         Text("\(matchScore)%")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Color("textSecondary"))
+                            .foregroundStyle(Color("background"))
                     }
 
                     Slider(
@@ -97,7 +105,7 @@ struct EditCandidateView: View {
                         in: 0...100,
                         step: 1
                     )
-                    .tint(Color("textSecondary"))
+                    .tint(Color("background"))
                 }
             }
 
@@ -135,7 +143,7 @@ struct EditCandidateView: View {
                         }
                     }
                     .foregroundStyle(
-                        Color("textSecondary")
+                        Color("background")
                     )
                 }
             }
@@ -201,6 +209,8 @@ struct EditCandidateView: View {
             stage: stage,
             experience: experience,
             matchScore: matchScore,
+            noticePeriod: noticePeriod,
+            expectedSalary: expectedSalary,
             resume: resumeData
         )
 
@@ -223,6 +233,8 @@ struct EditCandidateView: View {
                 appliedDate: "2 days ago",
                 email: "sophia@gmail.com",
                 phone: "(415) 123-4567",
+                noticePeriod: "30 Days",
+                expectedSalary: "₹15 LPA",
                 jobID: nil,
                 hasResume: true
             )

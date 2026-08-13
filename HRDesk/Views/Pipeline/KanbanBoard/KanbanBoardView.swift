@@ -175,6 +175,8 @@ struct KanbanStageColumn: View {
                 appliedDate: "2 days ago",
                 email: "sophia@gmail.com",
                 phone: "(415) 123-4567",
+                noticePeriod: "30 Days",
+                expectedSalary: "₹15 LPA",
                 jobID: nil,
                 hasResume: true
             ),
@@ -188,6 +190,8 @@ struct KanbanStageColumn: View {
                 appliedDate: "1 day ago",
                 email: "liam@gmail.com",
                 phone: "(212) 555-1234",
+                noticePeriod: "45 Days",
+                expectedSalary: "₹14 LPA",
                 jobID: nil,
                 hasResume: true
             )

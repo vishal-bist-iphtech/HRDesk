@@ -34,9 +34,7 @@ struct StageCard: View {
             maxWidth: .infinity
         )
         .frame(height: 92)
-        .background(
-            Color.gray.opacity(0.05)
-        )
+        .background(Color.gray.opacity(0.05))
         .overlay {
 
             RoundedRectangle(cornerRadius: 12)

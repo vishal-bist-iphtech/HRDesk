@@ -86,7 +86,7 @@ struct PipelineView: View {
 
                         Spacer()
 
-                        stageSelector
+                        selectedJobData
 
                         filterRow
 
@@ -99,9 +99,6 @@ struct PipelineView: View {
                 }
                 .padding()
             }
-            .background(Color("background")
-                    .ignoresSafeArea()
-            )
             .navigationBarHidden(true)
             .sheet(
                 isPresented: $showAddCandidate
