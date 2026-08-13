@@ -38,7 +38,6 @@ struct LoginView: View {
             .padding(.top, 40)
             .padding(.bottom, 32)
         }
-        .background(Color("background").ignoresSafeArea())
         .toolbar(.hidden, for: .navigationBar)
         .alert("Reset Password", isPresented: $showForgotAlert) {
             Button("OK", role: .cancel) {}
@@ -57,9 +56,9 @@ struct LoginView: View {
         VStack(spacing: 12) {
             Image(systemName: "person.3.sequence.fill")
                 .font(.system(size: 36))
-                .foregroundStyle(Color("textSecondary"))
+                .foregroundStyle(Color("background"))
                 .frame(width: 80, height: 80)
-                .background(Color("textSecondary").opacity(0.12))
+                .background(Color("background").opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
 
             Text("Welcome Back")
@@ -88,7 +87,7 @@ struct LoginView: View {
             } label: {
                 Text("Forgot Password?")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color("textSecondary"))
+                    .foregroundStyle(Color("background"))
             }
         }
     }
@@ -106,7 +105,7 @@ struct LoginView: View {
             NavigationLink("Sign Up") {
                 SignupView()
             }
-            .foregroundStyle(Color("textSecondary"))
+            .foregroundStyle(Color("background"))
             .fontWeight(.semibold)
         }
         .font(.subheadline)

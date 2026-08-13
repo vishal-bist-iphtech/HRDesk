@@ -44,7 +44,6 @@ struct SignupView: View {
             .padding(.top, 36)
             .padding(.bottom, 32)
         }
-        .background(Color("background").ignoresSafeArea())
         .toolbar(.hidden, for: .navigationBar)
         .alert("Passwords Don't Match", isPresented: $showAlert) {
             Button("OK", role: .cancel) {}
@@ -57,9 +56,9 @@ struct SignupView: View {
         VStack(spacing: 12) {
             Image(systemName: "person.badge.plus")
                 .font(.system(size: 36))
-                .foregroundStyle(Color("textSecondary"))
+                .foregroundStyle(Color("background"))
                 .frame(width: 80, height: 80)
-                .background(Color("textSecondary").opacity(0.12))
+                .background(Color("background").opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
 
             Text("Create Account")
@@ -95,7 +94,7 @@ struct SignupView: View {
             NavigationLink("Login") {
                 LoginView()
             }
-            .foregroundStyle(Color("textSecondary"))
+            .foregroundStyle(Color("background"))
             .fontWeight(.semibold)
         }
         .font(.subheadline)
