@@ -31,10 +31,30 @@ struct HomeView: View {
 
     private var stats: [(icon: String, title: String, value: String, tint: Color)] {
         [
-            ("briefcase.fill", "Open Jobs", "\(dashboardViewModel.openJobs)", Color("textSecondary")),
-            ("person.2.fill", "Applied", "\(dashboardViewModel.applications)", .orange),
-            ("checkmark.circle.fill", "Interviews", "\(dashboardViewModel.interviewsToday)", .green),
-            ("person.crop.circle.badge.checkmark", "Hired", "\(dashboardViewModel.hiredCandidates)", .purple)
+            (
+                 "briefcase.fill",
+                 "Open Jobs",
+                 "\(dashboardViewModel.openJobs)",
+                 Color("background")
+            ),
+            (
+                "person.2.fill",
+                "Applied",
+                "\(dashboardViewModel.applications)",
+                .orange
+            ),
+            (
+                "checkmark.circle.fill",
+                "Interviews",
+                "\(dashboardViewModel.interviewsToday)",
+                .green
+            ),
+            (
+                "person.crop.circle.badge.checkmark",
+                "Hired",
+                "\(dashboardViewModel.hiredCandidates)",
+                .purple
+            )
         ]
     }
 
@@ -67,7 +87,7 @@ struct HomeView: View {
                 } label: {
                     Image(systemName: "line.3.horizontal")
                         .font(.title.bold())
-                        .foregroundStyle(Color("textPrimary").opacity(0.6))
+                        .foregroundStyle(Color("textPrimary").opacity(0.8))
                 }
                 
             
@@ -75,7 +95,7 @@ struct HomeView: View {
                     HStack{
                         Text(greeting)
                             .font(.title3)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color("textPrimary").opacity(0.7))
                         Text(userName)
                             .font(.title3.bold())
                             .foregroundStyle(Color("textPrimary"))
@@ -90,17 +110,22 @@ struct HomeView: View {
             Spacer()
             
             Image(systemName: "bell.badge")
-                .font(.title)
-                   .foregroundStyle(.primary)
-                   .symbolRenderingMode(.palette)
-                   .foregroundStyle(.red, .primary)
+               .font(.title)
+               .foregroundStyle(.primary)
+               .symbolRenderingMode(.palette)
+               .foregroundStyle(.red, .primary)
         }
     }
 
     private var statsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             ForEach(Array(stats.enumerated()), id: \.offset) { _, stat in
-                StatCard(icon: stat.icon, title: stat.title, value: stat.value, tint: stat.tint)
+                StatCard(
+                        icon: stat.icon,
+                        title: stat.title,
+                        value: stat.value,
+                        tint: stat.tint
+                )
             }
             
         }
@@ -123,7 +148,7 @@ struct HomeView: View {
                     quickActionContent(
                         icon: "plus.circle.fill",
                         title: "Post a Job",
-                        tint: Color("textSecondary")
+                        tint: Color("background")
                     )
                 }
 
@@ -170,7 +195,7 @@ struct HomeView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
-        .background(Color.gray.opacity(0.06))
+        .background(Color.gray.opacity(0.08))
         .clipShape(
             RoundedRectangle(cornerRadius: 14)
         )
@@ -180,12 +205,7 @@ struct HomeView: View {
     
     private var todoList: some View {
 
-        VStack(
-            alignment: .leading,
-            spacing: 12
-        ) {
-
-            // MARK: Header
+        VStack(alignment: .leading,spacing: 12) {
 
             HStack {
 
@@ -206,25 +226,11 @@ struct HomeView: View {
                     } label: {
                         
                         Text("Add")
-                            .font(
-                                .system(
-                                    size: 16,
-                                    weight: .semibold
-                                )
-                            )
-                            .foregroundStyle(
-                                Color("textSecondary")
-                            )
+                            .font(.system(size: 16,weight: .semibold))
+                            .foregroundStyle(Color("textPrimary"))
                         Image(systemName: "plus")
-                            .font(
-                                .system(
-                                    size: 16,
-                                    weight: .semibold
-                                )
-                            )
-                            .foregroundStyle(
-                                Color("textSecondary")
-                            )
+                            .font(.system(size: 16,weight: .semibold))
+                            .foregroundStyle(Color("textPrimary"))
                         
                     }
 
@@ -241,7 +247,7 @@ struct HomeView: View {
                                 .subheadline.weight(.semibold)
                             )
                             .foregroundStyle(
-                                Color("textSecondary")
+                                Color("textPrimary")
                             )
                     }
                 }
@@ -258,28 +264,21 @@ struct HomeView: View {
                         "You don't have any tasks yet. Add a task to keep your work organized."
                     )
                 )
-                .frame(
-                    maxWidth: .infinity,
-                    minHeight: 180
-                )
+                .frame(maxWidth: .infinity, minHeight: 180)
 
             } else {
 
                 VStack(spacing: 10) {
 
                     ForEach(
-                        Array(
-                            todoViewModel.todos
-                                .prefix(5)
-                        )
+                        Array(todoViewModel.todos.prefix(5))
                     ) { todo in
 
                         TodoItem(
                             todo: todo
                         ) {
 
-                            todoViewModel
-                                .toggleCompletion(todo)
+                            todoViewModel.toggleCompletion(todo)
                         }
                     }
                 }

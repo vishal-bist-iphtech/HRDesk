@@ -18,7 +18,7 @@ struct ProfileView: View {
                     avatarSection
 
                     VStack(spacing: 0) {
-                        settingsRow(icon: "person.fill", title: "Account Settings", tint: Color("textSecondary"))
+                        settingsRow(icon: "person.fill", title: "Account Settings", tint: Color("background"))
                         Divider().padding(.leading, 48)
                         settingsRow(icon: "bell.fill", title: "Notifications", tint: .orange)
                         Divider().padding(.leading, 48)
@@ -43,7 +43,7 @@ struct ProfileView: View {
     private var avatarSection: some View {
         VStack(spacing: 12) {
             Circle()
-                .fill(Color("textSecondary"))
+                .fill(Color("background"))
                 .frame(width: 88, height: 88)
                 .overlay(
                     Image(systemName: "person.fill")
