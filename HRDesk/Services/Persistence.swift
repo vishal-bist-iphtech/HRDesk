@@ -35,11 +35,8 @@ struct PersistenceController {
         }
 
         let coordinator = container.persistentStoreCoordinator
-        let viewContext = container.viewContext
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-
-            var didRecreate = false
 
             if let error = error as NSError? {
 
@@ -68,7 +65,6 @@ struct PersistenceController {
                             at: storeURL,
                             options: nil
                         )
-                        didRecreate = true
                     } catch {
                         let nsError = error as NSError
                         fatalError(
@@ -84,12 +80,6 @@ struct PersistenceController {
 
             guard !inMemory else {
                 return
-            }
-
-            if error == nil || didRecreate {
-                DispatchQueue.main.async {
-                    SeedData.seedIfNeeded(in: viewContext)
-                }
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true

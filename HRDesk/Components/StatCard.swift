@@ -17,17 +17,17 @@ struct StatCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack{
-                Text(title)
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.primary.opacity(0.7))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Spacer()
+                
                 Image(systemName: icon)
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(tint)
                     .frame(width: 40, height: 40)
                     .background(tint.opacity(0.2))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                Text(title)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.primary.opacity(0.7))
             }
             
             Text(value)

@@ -35,7 +35,6 @@ struct ProfileView: View {
                 }
                 .padding()
             }
-            .background(Color("background").ignoresSafeArea())
             .navigationTitle("Profile")
         }
     }
@@ -63,9 +62,7 @@ struct ProfileView: View {
     }
 
     private func settingsRow(icon: String, title: String, tint: Color) -> some View {
-        Button {
-            // Placeholder
-        } label: {
+        Button {} label: {
             HStack(spacing: 14) {
                 Image(systemName: icon)
                     .foregroundStyle(tint)
