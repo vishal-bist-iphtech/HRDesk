@@ -14,7 +14,7 @@ struct HRDeskApp: App {
     
     @StateObject private var session = SessionManager()
     @StateObject private var authViewModel = AuthViewModel()
-    
+
     var body: some Scene {
         WindowGroup {
                 

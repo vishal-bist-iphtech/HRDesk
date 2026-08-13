@@ -21,7 +21,6 @@ struct AppView: View {
                 .padding(.top, 60)
                 .padding(.bottom, 32)
             }
-            .background(Color("background").ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
         }
     }
@@ -30,9 +29,9 @@ struct AppView: View {
         VStack(spacing: 16) {
             ZStack {
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(Color("textSecondary"))
+                    .fill(Color("background"))
                     .frame(width: 96, height: 96)
-                    .shadow(color: Color("textSecondary").opacity(0.4), radius: 16, y: 8)
+                    .shadow(color: Color("background").opacity(0.4), radius: 16, y: 8)
 
                 Image(systemName: "person.3.sequence.fill")
                     .font(.system(size: 44))
@@ -75,11 +74,11 @@ struct AppView: View {
                         .frame(maxWidth: .infinity)
                         .overlay(
                             RoundedRectangle(cornerRadius: 14)
-                                .stroke(Color("textSecondary"), lineWidth: 1.5)
+                                .stroke(Color("background"), lineWidth: 1.5)
                         )
                 }
                 .foregroundStyle(.white)
-                .background(Color("textSecondary"))
+                .background(Color("background"))
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             }
 
@@ -88,12 +87,12 @@ struct AppView: View {
             } label: {
                 Text("Create new account")
                     .font(.headline)
-                    .foregroundStyle(Color("textSecondary"))
+                    .foregroundStyle(Color("background"))
                     .frame(maxWidth: .infinity)
                     .padding()
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
-                            .stroke(Color("textSecondary"), lineWidth: 1.5)
+                            .stroke(Color("background"), lineWidth: 1.5)
                     )
             }
         }

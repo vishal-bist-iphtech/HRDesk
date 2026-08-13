@@ -11,37 +11,40 @@ struct ContentView: View {
     
     @StateObject private var todoViewModel = TodoViewModel()
     @StateObject private var jobViewModel = JobViewModel()
+    @StateObject private var employeeViewModel = EmployeeViewModel()
 
     var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house.fill")
-                }
-            
-            PipelineView()
-                .tabItem {
-                    Label("Pipeline", systemImage: "square.grid.2x2.fill")
-                }
+        
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Home", systemImage: "house.fill")
+                    }
+                
+                PipelineView()
+                    .tabItem {
+                        Label("Pipeline", systemImage: "square.grid.2x2.fill")
+                    }
 
-            JobsView()
-                .tabItem {
-                    Label("Jobs", systemImage: "briefcase.fill")
-                }
+                JobsView()
+                    .tabItem {
+                        Label("Jobs", systemImage: "briefcase.fill")
+                    }
 
-            CandidatesView()
-                .tabItem {
-                    Label("Candidates", systemImage: "person.2.fill")
-                }
-
-            EmployeesView()
-                .tabItem {
-                    Label("Employees", systemImage: "person.3.fill")
-                }
-        }
-        .tint(Color("textSecondary"))
-        .environmentObject(todoViewModel)
-        .environmentObject(jobViewModel)
+                EmployeesView()
+                    .tabItem {
+                        Label("Employees", systemImage: "person.3.fill")
+                    }
+                
+                AnalysisView()
+                    .tabItem {
+                        Label("Analysis", systemImage: "chart.pie")
+                    }
+            }
+            .tint(Color("background"))
+            .environmentObject(todoViewModel)
+            .environmentObject(jobViewModel)
+            .environmentObject(employeeViewModel)       
     }
 }
 
