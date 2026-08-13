@@ -50,7 +50,7 @@ extension PipelineView {
                         .font(.caption.bold())
                     }
                     .foregroundStyle(
-                        Color("textSecondary")
+                        Color("background")
                     )
                 }
             }
@@ -72,7 +72,7 @@ extension PipelineView {
                 .font(.title2)
                 .frame(width: 36, height: 36)
                 .foregroundStyle(.white)
-                .background(Color("textSecondary"))
+                .background(Color("background"))
                 .clipShape(Circle())
             }
 
@@ -87,13 +87,13 @@ extension PipelineView {
                     .font(.title2)
                     .foregroundStyle(.white)
                     .frame(width: 36, height: 36)
-                    .background(Color("textSecondary"))
+                    .background(Color("background"))
                     .clipShape(Circle())
             }
         }
     }
 
-    var stageSelector: some View {
+    var selectedJobData: some View {
 
         ScrollView(.horizontal, showsIndicators: false) {
 
@@ -136,7 +136,7 @@ extension PipelineView {
 
                     Text("Sort:")
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color("textPrimary").opacity(0.7))
 
                     Text(
                         sortAscending
@@ -144,13 +144,16 @@ extension PipelineView {
                         : "Last"
                     )
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(Color("textPrimary"))
+                    .foregroundStyle(.primary)
 
                     Image(
                         systemName: "chevron.down"
                     )
                     .font(.caption.weight(.medium))
                 }
+                .padding(6)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
             }
 
             Spacer()
@@ -159,7 +162,7 @@ extension PipelineView {
                 "\(filteredCandidates.count) Candidates"
             )
             .font(.subheadline.weight(.medium))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Color("textPrimary"))
 
             Button {
 
@@ -187,13 +190,14 @@ extension PipelineView {
 
             Image(systemName: "magnifyingglass")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color("textPrimary"))
 
             TextField(
                 "Search candidates",
                 text: $searchText
             )
             .font(.subheadline)
+            .foregroundStyle(Color("textPrimary"))
             .autocorrectionDisabled()
 
             if !searchText.isEmpty {
@@ -208,13 +212,13 @@ extension PipelineView {
                         systemName: "xmark.circle.fill"
                     )
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color("textPrimary"))
                 }
             }
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(Color.gray.opacity(0.035))
+        .background(Color.gray.opacity(0.03))
         .overlay {
 
             RoundedRectangle(cornerRadius: 9)

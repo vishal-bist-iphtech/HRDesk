@@ -255,6 +255,13 @@ final class CoreDataService {
         }
     }
 
+    func deleteEmployee(_ employee: EmployeeEntity) {
+
+        context.delete(employee)
+
+        saveContext()
+    }
+
     // MARK: - Auth
 
     func addUser(
@@ -411,6 +418,8 @@ final class CoreDataService {
         experience: String,
         matchScore: Int,
         appliedDate: String,
+        noticePeriod: String,
+        expectedSalary: String,
         resume: Data?,
         job: JobEntity?
     ) {
@@ -426,6 +435,8 @@ final class CoreDataService {
         candidate.experience = experience
         candidate.matchScore = Int64(matchScore)
         candidate.appliedDate = appliedDate
+        candidate.noticePeriod = noticePeriod
+        candidate.expectedSalary = expectedSalary
         candidate.job = job
         candidate.resumeData = resume ?? Data()
         candidate.createdAt = Date()
@@ -443,6 +454,8 @@ final class CoreDataService {
         experience: String,
         matchScore: Int,
         appliedDate: String,
+        noticePeriod: String,
+        expectedSalary: String,
         resume: Data?
     ) {
 
@@ -458,6 +471,8 @@ final class CoreDataService {
         candidate.experience = experience
         candidate.matchScore = Int64(matchScore)
         candidate.appliedDate = appliedDate
+        candidate.noticePeriod = noticePeriod
+        candidate.expectedSalary = expectedSalary
         candidate.resumeData = resume ?? candidate.resumeData
 
         saveContext()

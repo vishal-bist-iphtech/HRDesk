@@ -16,7 +16,7 @@ final class SessionManager: ObservableObject {
     
     init() {
         checkSession()
-    }
+    }        
     
     func checkSession() {
         isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")

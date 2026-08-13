@@ -29,12 +29,67 @@ struct PersistenceController {
 
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "HRDesk")
+
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
+
+        let coordinator = container.persistentStoreCoordinator
+        let viewContext = container.viewContext
+
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+
+            var didRecreate = false
+
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+
+                print(
+                    "Failed to load persistent store:",
+                    error,
+                    error.userInfo
+                )
+
+                // Corrupt or incompatible store: discard it and recreate,
+                // otherwise the app would crash on every launch.
+                if let storeURL = storeDescription.url {
+
+                    try? FileManager.default.removeItem(at: storeURL)
+                    try? FileManager.default.removeItem(
+                        at: URL(fileURLWithPath: storeURL.path + "-shm")
+                    )
+                    try? FileManager.default.removeItem(
+                        at: URL(fileURLWithPath: storeURL.path + "-wal")
+                    )
+
+                    do {
+                        try coordinator.addPersistentStore(
+                            ofType: NSSQLiteStoreType,
+                            configurationName: nil,
+                            at: storeURL,
+                            options: nil
+                        )
+                        didRecreate = true
+                    } catch {
+                        let nsError = error as NSError
+                        fatalError(
+                            "Failed to recreate persistent store \(nsError), \(nsError.userInfo)"
+                        )
+                    }
+
+                } else {
+
+                    fatalError("Unresolved error \(error), \(error.userInfo)")
+                }
+            }
+
+            guard !inMemory else {
+                return
+            }
+
+            if error == nil || didRecreate {
+                DispatchQueue.main.async {
+                    SeedData.seedIfNeeded(in: viewContext)
+                }
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true

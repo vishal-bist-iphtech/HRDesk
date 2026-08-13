@@ -19,6 +19,8 @@ struct Candidate: Identifiable {
     let appliedDate: String
     let email: String
     let phone: String
+    let noticePeriod: String
+    let expectedSalary: String
     let jobID: UUID?
     let hasResume: Bool
 
@@ -57,6 +59,8 @@ struct Candidate: Identifiable {
         appliedDate: String,
         email: String,
         phone: String,
+        noticePeriod: String,
+        expectedSalary: String,
         jobID: UUID?,
         hasResume: Bool
     ) {
@@ -70,6 +74,8 @@ struct Candidate: Identifiable {
         self.appliedDate = appliedDate
         self.email = email
         self.phone = phone
+        self.noticePeriod = noticePeriod
+        self.expectedSalary = expectedSalary
         self.jobID = jobID
         self.hasResume = hasResume
     }
@@ -88,6 +94,8 @@ struct Candidate: Identifiable {
             appliedDate: entity.appliedDate ?? "",
             email: entity.email ?? "",
             phone: entity.phone ?? "",
+            noticePeriod: entity.noticePeriod ?? "",
+            expectedSalary: entity.expectedSalary ?? "",
             jobID: entity.job?.id,
             hasResume: (entity.resumeData?.isEmpty == false)
         )
