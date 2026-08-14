@@ -25,8 +25,7 @@ final class EmployeeViewModel: ObservableObject {
     }
 
     func addEmployee(
-        firstName: String,
-        lastName: String,
+        name: String,
         email: String,
         phone: String,
         department: String,
@@ -36,8 +35,7 @@ final class EmployeeViewModel: ObservableObject {
     ) {
 
         coreDataService.addEmployee(
-            firstName: firstName,
-            lastName: lastName,
+            name: name,
             email: email,
             phone: phone,
             department: department,
