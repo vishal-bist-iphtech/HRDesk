@@ -12,7 +12,7 @@ struct PipelineView: View {
     @EnvironmentObject var jobViewModel: JobViewModel
     @StateObject var candidateViewModel = CandidateViewModel()
 
-    @State var selectedJobIndex = 0
+    @State var selectedJobIndex = -1
     @State var searchText = ""
     @State var isSearching = false
     @State var sortAscending = false
@@ -33,7 +33,7 @@ struct PipelineView: View {
     var selectedJob: String {
 
         selectedJobEntity?.title
-            ?? "Product Designer"
+            ?? "All Jobs"
     }
 
     var selectedJobCandidates: [Candidate] {
