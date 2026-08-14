@@ -13,16 +13,19 @@ struct Candidate: Identifiable {
 
     let name: String
     let role: String
-    let stage: PipelineStage
-    let experience: String
-    let matchScore: Int
-    let appliedDate: String
     let email: String
     let phone: String
     let noticePeriod: String
     let expectedSalary: String
+    let location: String
+    let website: String?
+    let about: String
+    let resume: Data
+    let experience: String
+    let stage: PipelineStage
+    let matchScore: Int
+    let appliedDate: String
     let jobID: UUID?
-    let hasResume: Bool
 
     var initials: String {
 
@@ -33,18 +36,6 @@ struct Candidate: Identifiable {
             .joined()
     }
 
-    var about: String {
-        "A passionate \(role) with \(experience). Known for strong product thinking, cross-functional collaboration, and delivering high-quality, user-centered solutions."
-    }
-
-    var location: String {
-        "San Francisco, CA"
-    }
-
-    var website: String {
-        "https://www.\(name.lowercased().replacingOccurrences(of: " ", with: "-")).com"
-    }
-
     var employmentType: String {
         "Full-time"
     }
@@ -53,31 +44,37 @@ struct Candidate: Identifiable {
         id: UUID,
         name: String,
         role: String,
-        stage: PipelineStage,
-        experience: String,
-        matchScore: Int,
-        appliedDate: String,
         email: String,
         phone: String,
+        experience: String,
         noticePeriod: String,
         expectedSalary: String,
+        location: String,
+        website: String?,
+        about: String,
+        resume: Data,
+        stage: PipelineStage,
+        matchScore: Int,
+        appliedDate: String,
         jobID: UUID?,
-        hasResume: Bool
     ) {
 
         self.id = id
         self.name = name
         self.role = role
-        self.stage = stage
-        self.experience = experience
-        self.matchScore = matchScore
-        self.appliedDate = appliedDate
         self.email = email
         self.phone = phone
+        self.experience = experience
         self.noticePeriod = noticePeriod
         self.expectedSalary = expectedSalary
+        self.location = location
+        self.website = website
+        self.about = about
+        self.resume = resume
+        self.stage = stage
+        self.matchScore = matchScore
+        self.appliedDate = appliedDate
         self.jobID = jobID
-        self.hasResume = hasResume
     }
 
     init(entity: CandidateEntity) {
@@ -86,18 +83,21 @@ struct Candidate: Identifiable {
             id: entity.id ?? UUID(),
             name: entity.fullName ?? "",
             role: entity.role ?? "",
+            email: entity.email ?? "",
+            phone: entity.phone ?? "",
+            experience: entity.experience ?? "",
+            noticePeriod: entity.noticePeriod ?? "",
+            expectedSalary: entity.expectedSalary ?? "",
+            location: entity.location ?? "",
+            website: entity.website,
+            about: entity.about ?? "",
+            resume: entity.resumeData ?? Data(),
             stage: PipelineStage(
                 rawValue: entity.status ?? ""
             ) ?? .applied,
-            experience: entity.experience ?? "",
             matchScore: Int(entity.matchScore),
             appliedDate: entity.appliedDate ?? "",
-            email: entity.email ?? "",
-            phone: entity.phone ?? "",
-            noticePeriod: entity.noticePeriod ?? "",
-            expectedSalary: entity.expectedSalary ?? "",
-            jobID: entity.job?.id,
-            hasResume: (entity.resumeData?.isEmpty == false)
+            jobID: entity.job?.id
         )
     }
 }
