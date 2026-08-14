@@ -13,8 +13,7 @@ struct AddEmployeeView: View {
 
     @EnvironmentObject private var employeeViewModel: EmployeeViewModel
 
-    @State private var firstName = ""
-    @State private var lastName = ""
+    @State private var name = ""
     @State private var email = ""
     @State private var phone = ""
     @State private var department = ""
@@ -29,13 +28,8 @@ struct AddEmployeeView: View {
             Section("Personal Information") {
 
                 TextField(
-                    "First Name",
-                    text: $firstName
-                )
-
-                TextField(
-                    "Last Name",
-                    text: $lastName
+                    "Full Name",
+                    text: $name
                 )
 
                 TextField(
@@ -88,8 +82,7 @@ struct AddEmployeeView: View {
                         .fontWeight(.semibold)
                 }
                 .disabled(
-                    firstName.isEmpty ||
-                    lastName.isEmpty ||
+                    name.isEmpty ||
                     email.isEmpty
                 )
             }
@@ -101,8 +94,7 @@ struct AddEmployeeView: View {
     private func saveEmployee() {
 
         employeeViewModel.addEmployee(
-            firstName: firstName,
-            lastName: lastName,
+            name: name,
             email: email,
             phone: phone,
             department: department,

@@ -25,8 +25,7 @@ struct EmployeesView: View {
 
         return employeeViewModel.employees.filter { employee in
 
-            let fullName = "\(employee.firstName ?? "") \(employee.lastName ?? "")"
-                .lowercased()
+            let fullName = (employee.name ?? "").lowercased()
 
             return fullName.contains(query)
                 || employee.position?.lowercased().contains(query) == true

@@ -22,13 +22,13 @@ struct EmployeeCard: View {
             HStack(alignment: .top, spacing: 12) {
 
                 AvatarView(
-                    name: "\(employee.firstName ?? "") \(employee.lastName ?? "")",
+                    name: employee.name ?? "—",
                     size: 44
                 )
 
                 VStack(alignment: .leading, spacing: 3) {
 
-                    Text("\(employee.firstName ?? "") \(employee.lastName ?? "")")
+                    Text(employee.name ?? "—")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color("textPrimary"))
                         .lineLimit(1)
@@ -155,22 +155,34 @@ struct EmployeeCard: View {
 }
 
 #Preview {
+    EmployeeCardPreview()
+}
 
-    let context = PersistenceController.preview.container.viewContext
-    let employee = EmployeeEntity(context: context)
-    employee.firstName = "James"
-    employee.lastName = "Wilson"
-    employee.position = "Engineering Manager"
-    employee.department = "Engineering"
-    employee.email = "james.wilson@hrdesk.com"
-    employee.salary = 3200000
-    employee.joiningDate = Date()
+private struct EmployeeCardPreview: View {
 
-    return ScrollView {
-        VStack(spacing: 12) {
-            EmployeeCard(employee: employee)
-        }
-        .padding(.horizontal)
+    private let employee: EmployeeEntity
+
+    init() {
+
+        let context = PersistenceController.preview.container.viewContext
+        let employee = EmployeeEntity(context: context)
+        employee.name = "James Wilson"
+        employee.position = "Engineering Manager"
+        employee.department = "Engineering"
+        employee.email = "james.wilson@hrdesk.com"
+        employee.salary = 3200000
+        employee.joiningDate = Date()
+        self.employee = employee
     }
-    .background(Color("background"))
+
+    var body: some View {
+
+        ScrollView {
+            VStack(spacing: 12) {
+                EmployeeCard(employee: employee)
+            }
+            .padding(.horizontal)
+        }
+        .background(Color("background"))
+    }
 }
