@@ -173,16 +173,19 @@ struct CandidateCard: View {
                 id: UUID(),
                 name: "Sophia Carter",
                 role: "Product Designer",
-                stage: .interview,
-                experience: "3 Yrs Exp",
-                matchScore: 92,
-                appliedDate: "2 days ago",
                 email: "sophia@gmail.com",
                 phone: "(415) 123-4567",
+                experience: "3 Yrs Exp",
                 noticePeriod: "30 Days",
                 expectedSalary: "₹15 LPA",
+                location: "San Francisco, CA",
+                website: "https://www.sophiacarter.com",
+                about: "Product Designer with a passion for user-centered design.",
+                resume: Data(),
+                stage: .interview,
+                matchScore: 92,
+                appliedDate: "2 days ago",
                 jobID: nil,
-                hasResume: true
             )
         )
     }

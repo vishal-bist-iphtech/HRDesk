@@ -22,6 +22,15 @@ extension PipelineView {
 
                 Menu {
 
+                    Button {
+                        selectedJobIndex = -1
+                    } label: {
+
+                        Text("All Jobs")
+                    }
+
+                    Divider()
+
                     ForEach(
                         Array(jobViewModel.jobs.enumerated()),
                         id: \.element.objectID
@@ -31,9 +40,7 @@ extension PipelineView {
                             selectedJobIndex = index
                         } label: {
 
-                            Text(
-                                job.title ?? "Untitled Job"
-                            )
+                            Text(job.title ?? "Untitled Job")
                         }
                     }
 

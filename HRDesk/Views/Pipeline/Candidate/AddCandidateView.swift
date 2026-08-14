@@ -25,7 +25,10 @@ struct AddCandidateView: View {
     @State private var experience = ""
     @State private var noticePeriod = ""
     @State private var expectedSalary = ""
-    @State private var matchScore = 75
+    @State private var about = ""
+    @State private var location = ""
+    @State private var website = ""
+    @State private var matchScore = 65
     @State private var showFileImporter = false
     @State private var resumeData: Data?
     @State private var resumeFileName: String?
@@ -34,11 +37,13 @@ struct AddCandidateView: View {
 
         Form {
 
-            Section("Basic Details") {
+            Section("Basic Details*") {
 
                 TextField("Full Name", text: $name)
 
                 TextField("Role", text: $role)
+                    .textInputAutocapitalization(.never)
+                    .disabled(!role.isEmpty)
 
                 TextField("Experience (e.g. 3 Yrs Exp)", text: $experience)
 
@@ -49,12 +54,24 @@ struct AddCandidateView: View {
 
             Section("Contact Details") {
 
-                TextField("Email", text: $email)
+                TextField("Email*", text: $email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
 
-                TextField("Phone", text: $phone)
+                TextField("Phone*", text: $phone)
                     .keyboardType(.phonePad)
+
+                TextField("Location", text: $location)
+
+                TextField("Website", text: $website)
+                    .keyboardType(.URL)
+                    .textInputAutocapitalization(.never)
+            }
+
+            Section("About") {
+
+                TextEditor(text: $about)
+                    .frame(minHeight: 100)
             }
 
             Section("Match Score") {
@@ -88,7 +105,7 @@ struct AddCandidateView: View {
                 }
             }
 
-            Section("Resume") {
+            Section("Resume*") {
 
                 Button {
                     showFileImporter = true
@@ -136,9 +153,14 @@ struct AddCandidateView: View {
                         .fontWeight(.semibold)
                 }
                 .disabled(
-                    name.trimmingCharacters(
-                        in: .whitespacesAndNewlines
-                    ).isEmpty
+                    name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    role.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    experience.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    noticePeriod.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    expectedSalary.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    phone.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    resumeData == nil
                 )
             }
         }
@@ -193,6 +215,9 @@ struct AddCandidateView: View {
             matchScore: matchScore,
             noticePeriod: noticePeriod,
             expectedSalary: expectedSalary,
+            about: about,
+            location: location,
+            website: website.isEmpty ? nil : website,
             resume: resumeData,
             job: defaultJob
         )

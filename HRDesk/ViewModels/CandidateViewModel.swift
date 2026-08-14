@@ -36,6 +36,9 @@ final class CandidateViewModel: ObservableObject {
         matchScore: Int,
         noticePeriod: String,
         expectedSalary: String,
+        about: String,
+        location: String,
+        website: String?,
         resume: Data?,
         job: JobEntity?
     ) {
@@ -51,6 +54,9 @@ final class CandidateViewModel: ObservableObject {
             appliedDate: "Applied \(Date().formatted(date: .abbreviated, time: .omitted))",
             noticePeriod: noticePeriod,
             expectedSalary: expectedSalary,
+            about: about,
+            location: location,
+            website: website,
             resume: resume,
             job: job
         )
@@ -69,6 +75,9 @@ final class CandidateViewModel: ObservableObject {
         matchScore: Int,
         noticePeriod: String,
         expectedSalary: String,
+        about: String,
+        location: String,
+        website: String?,
         resume: Data?
     ) {
 
@@ -84,6 +93,9 @@ final class CandidateViewModel: ObservableObject {
             appliedDate: candidate.appliedDate,
             noticePeriod: noticePeriod,
             expectedSalary: expectedSalary,
+            about: about,
+            location: location,
+            website: website,
             resume: resume
         )
 

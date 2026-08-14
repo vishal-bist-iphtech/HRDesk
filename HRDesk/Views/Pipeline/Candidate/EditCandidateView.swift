@@ -24,6 +24,9 @@ struct EditCandidateView: View {
     @State private var experience: String
     @State private var noticePeriod: String
     @State private var expectedSalary: String
+    @State private var about: String
+    @State private var location: String
+    @State private var website: String
     @State private var matchScore: Int
     @State private var showFileImporter = false
     @State private var resumeData: Data?
@@ -41,6 +44,9 @@ struct EditCandidateView: View {
         _experience = State(initialValue: candidate.experience)
         _noticePeriod = State(initialValue: candidate.noticePeriod)
         _expectedSalary = State(initialValue: candidate.expectedSalary)
+        _about = State(initialValue: candidate.about)
+        _location = State(initialValue: candidate.location)
+        _website = State(initialValue: candidate.website ?? "")
         _matchScore = State(initialValue: candidate.matchScore)
     }
 
@@ -53,6 +59,7 @@ struct EditCandidateView: View {
                 TextField("Full Name", text: $name)
 
                 TextField("Role", text: $role)
+                    .disabled(true)
 
                 TextField("Experience (e.g. 3 Yrs Exp)", text: $experience)
 
@@ -69,6 +76,18 @@ struct EditCandidateView: View {
 
                 TextField("Phone", text: $phone)
                     .keyboardType(.phonePad)
+
+                TextField("Location", text: $location)
+
+                TextField("Website", text: $website)
+                    .keyboardType(.URL)
+                    .textInputAutocapitalization(.never)
+            }
+
+            Section("About") {
+
+                TextEditor(text: $about)
+                    .frame(minHeight: 100)
             }
 
             Section("Pipeline") {
@@ -119,7 +138,7 @@ struct EditCandidateView: View {
 
                         Image(
                             systemName:
-                                (resumeData != nil || candidate.hasResume)
+                                (resumeData != nil || !candidate.resume.isEmpty)
                                 ? "doc.fill"
                                 : "doc.badge.plus"
                         )
@@ -127,7 +146,7 @@ struct EditCandidateView: View {
 
                         Text(
                             resumeFileName
-                                ?? (candidate.hasResume
+                                ?? (!candidate.resume.isEmpty
                                     ? "Resume Attached"
                                     : "Attach Resume (PDF)")
                         )
@@ -136,7 +155,7 @@ struct EditCandidateView: View {
 
                         Spacer()
 
-                        if resumeData != nil || candidate.hasResume {
+                        if resumeData != nil || !candidate.resume.isEmpty {
 
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(.green)
@@ -211,6 +230,9 @@ struct EditCandidateView: View {
             matchScore: matchScore,
             noticePeriod: noticePeriod,
             expectedSalary: expectedSalary,
+            about: about,
+            location: location,
+            website: website.isEmpty ? nil : website,
             resume: resumeData
         )
 
@@ -227,16 +249,19 @@ struct EditCandidateView: View {
                 id: UUID(),
                 name: "Sophia Carter",
                 role: "Product Designer",
-                stage: .interview,
-                experience: "3 Yrs Exp",
-                matchScore: 92,
-                appliedDate: "2 days ago",
                 email: "sophia@gmail.com",
                 phone: "(415) 123-4567",
+                experience: "3 Yrs Exp",
                 noticePeriod: "30 Days",
                 expectedSalary: "₹15 LPA",
+                location: "San Francisco, CA",
+                website: "https://www.sophiacarter.com",
+                about: "Product Designer with a passion for user-centered design.",
+                resume: Data(),
+                stage: .interview,
+                matchScore: 92,
+                appliedDate: "2 days ago",
                 jobID: nil,
-                hasResume: true
             )
         )
         .environmentObject(CandidateViewModel())

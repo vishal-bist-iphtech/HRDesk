@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PDFKit
 
 struct CandidateDetailView: View {
 
@@ -290,17 +291,21 @@ extension CandidateDetailView {
         }
     }
 
+    @ViewBuilder
     private func detailInfo(
         icon: String,
-        text: String
+        text: String?
     ) -> some View {
 
-        Label(
-            text,
-            systemImage: icon
-        )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
+        if let text, !text.isEmpty {
+
+            Label(
+                text,
+                systemImage: icon
+            )
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
     }
 }
 
@@ -414,15 +419,59 @@ extension CandidateDetailView {
         }
     }
 
+    @ViewBuilder
     private var resumeContent: some View {
 
-        ContentUnavailableView(
-            "No Resume Added",
-            systemImage: "clock",
-            description: Text(
-                "Candidate resume will appear here."
+        if candidate.resume.isEmpty {
+
+            ContentUnavailableView(
+                "No Resume Added",
+                systemImage: "doc.text",
+                description: Text(
+                    "Candidate resume will appear here."
+                )
             )
-        )
+            .padding(.top, 60)
+
+        } else if ResumePreviewView.isPDF(candidate.resume) {
+
+            resumeFrame {
+                PDFKitResumeView(
+                    resumeData: candidate.resume
+                )
+            }
+
+        }
+        else {
+
+            ContentUnavailableView(
+                "Cannot Preview Resume",
+                systemImage: "doc.text",
+                description: Text(
+                    "The attached file format is not supported."
+                )
+            )
+            .padding(.top, 60)
+        }
+    }
+
+    private func resumeFrame<Content: View>(
+        @ViewBuilder content: () -> Content) -> some View {
+
+        content()
+            .frame(maxWidth: .infinity)
+            .frame(height: 480)
+            .overlay {
+
+                RoundedRectangle(cornerRadius: 12)
+                .stroke(
+                    Color.gray.opacity(0.2),
+                    lineWidth: 1
+                )
+            }
+            .clipShape(
+                RoundedRectangle(cornerRadius: 12)
+            )
     }
 }
 
@@ -472,7 +521,13 @@ extension CandidateDetailView {
             .disabled(nextStage == nil)
             .opacity(nextStage == nil ? 0.4 : 1)
 
-            Button { } label: {
+            NavigationLink {
+
+                ScheduleInterviewView(
+                    candidate: candidate
+                )
+
+            } label: {
 
                 Text("Schedule Interview")
                     .font(
@@ -548,5 +603,38 @@ extension CandidateDetailView {
                 return "Resume"
             }
         }
+    }
+}
+
+private struct ResumePreviewView {
+
+    static func isPDF(_ data: Data) -> Bool {
+
+        data.prefix(5)
+            == Data("%PDF-".utf8)
+    }
+}
+
+private struct PDFKitResumeView: UIViewRepresentable {
+
+    let resumeData: Data
+
+    func makeUIView(context: Context) -> PDFView {
+
+        let view = PDFView()
+        view.document = PDFDocument(data: resumeData)
+        view.autoScales = true
+        view.displayMode = .singlePageContinuous
+        view.displayDirection = .vertical
+        view.backgroundColor = .systemBackground
+        return view
+    }
+
+    func updateUIView(
+        _ uiView: PDFView,
+        context: Context
+    ) {
+
+        uiView.document = PDFDocument(data: resumeData)
     }
 }
