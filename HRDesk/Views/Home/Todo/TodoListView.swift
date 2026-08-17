@@ -10,6 +10,7 @@ import SwiftUI
 struct TodoListView: View {
 
     @EnvironmentObject private var todoViewModel: TodoViewModel
+    @EnvironmentObject private var interviewViewModel: InterviewViewModel
 
     var body: some View {
 
@@ -60,9 +61,7 @@ struct TodoListView: View {
                     todo: todo
                 ) {
 
-                    todoViewModel.toggleCompletion(
-                        todo
-                    )
+                    toggleTodo(todo)
                 }
                 .swipeActions(
                     edge: .trailing,
@@ -113,6 +112,20 @@ struct TodoListView: View {
 
         todoViewModel.deleteTodo(todo)
     }
+
+    private func toggleTodo(_ todo: TodoEntity) {
+
+        let willComplete = !todo.isCompleted
+
+        todoViewModel.toggleCompletion(todo)
+
+        if let interviewID = todo.interviewID {
+            interviewViewModel.setDone(
+                interviewID: interviewID,
+                done: willComplete
+            )
+        }
+    }
 }
 
 #Preview {
@@ -121,5 +134,6 @@ struct TodoListView: View {
 
         TodoListView()
             .environmentObject(TodoViewModel())
+            .environmentObject(InterviewViewModel())
     }
 }

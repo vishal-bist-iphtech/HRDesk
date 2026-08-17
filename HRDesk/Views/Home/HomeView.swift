@@ -13,6 +13,7 @@ struct HomeView: View {
     
     @EnvironmentObject var todoViewModel: TodoViewModel
     @EnvironmentObject var jobViewModel: JobViewModel
+    @EnvironmentObject var interviewViewModel: InterviewViewModel
 
     @StateObject private var dashboardViewModel = DashboardViewModel()
 
@@ -75,6 +76,7 @@ struct HomeView: View {
         }
         .onAppear {
             dashboardViewModel.refresh()
+            interviewViewModel.fetchInterviews()
         }
     }
 
@@ -120,14 +122,26 @@ struct HomeView: View {
     private var statsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             ForEach(Array(stats.enumerated()), id: \.offset) { _, stat in
-                StatCard(
-                        icon: stat.icon,
-                        title: stat.title,
-                        value: stat.value,
-                        tint: stat.tint
-                )
+                statCardDestination(stat: stat)
             }
-            
+        }
+    }
+
+    private func statCardDestination(stat: (icon: String, title: String, value: String, tint: Color)) -> some View {
+        NavigationLink {
+            switch stat.title {
+            case "Interviews":
+                UpcomingInterviewsView()
+            default:
+                UpcomingInterviewsView()
+            }
+        } label: {
+            StatCard(
+                icon: stat.icon,
+                title: stat.title,
+                value: stat.value,
+                tint: stat.tint
+            )
         }
     }
 
@@ -163,7 +177,8 @@ struct HomeView: View {
                     )
                 }
 
-                Button {
+                NavigationLink {
+                    UpcomingInterviewsView()
                 } label: {
 
                     quickActionContent(
@@ -200,9 +215,21 @@ struct HomeView: View {
             RoundedRectangle(cornerRadius: 14)
         )
     }
-
-   
     
+
+    private var upcomingInterviewList: [InterviewEntity] {
+
+        let startOfDay = Calendar.current.startOfDay(for: Date())
+
+        return interviewViewModel.interviews
+            .filter {
+
+                ($0.status ?? "Scheduled") != "Done"
+                && ($0.date ?? .distantPast) >= startOfDay
+            }
+            .sorted { ($0.date ?? Date()) < ($1.date ?? Date()) }
+    }
+
     private var todoList: some View {
 
         VStack(alignment: .leading,spacing: 12) {
@@ -278,11 +305,25 @@ struct HomeView: View {
                             todo: todo
                         ) {
 
-                            todoViewModel.toggleCompletion(todo)
+                            toggleTodo(todo)
                         }
                     }
                 }
             }
+        }
+    }
+
+    private func toggleTodo(_ todo: TodoEntity) {
+
+        let willComplete = !todo.isCompleted
+
+        todoViewModel.toggleCompletion(todo)
+
+        if let interviewID = todo.interviewID {
+            interviewViewModel.setDone(
+                interviewID: interviewID,
+                done: willComplete
+            )
         }
     }
 }
@@ -293,4 +334,5 @@ struct HomeView: View {
         .environmentObject(AuthViewModel())
         .environmentObject(TodoViewModel())
         .environmentObject(JobViewModel())
+        .environmentObject(InterviewViewModel())
 }
