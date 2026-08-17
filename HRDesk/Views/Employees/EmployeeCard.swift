@@ -100,11 +100,6 @@ struct EmployeeCard: View {
 
             HStack(spacing: 12) {
 
-                Label(
-                    formattedSalary(employee.salary),
-                    systemImage: "indianrupeesign.circle"
-                )
-                .lineLimit(1)
 
                 Label(
                     employee.email ?? "—",
@@ -131,17 +126,6 @@ struct EmployeeCard: View {
         )
     }
 
-    private func formattedSalary(_ salary: Double) -> String {
-
-        let lakhs = salary / 100_000
-
-        if lakhs >= 1 {
-            return String(format: "₹%.1f LPA", lakhs)
-        }
-
-        return String(format: "₹%.0f", salary)
-    }
-
     private func formattedDate(_ date: Date?) -> String {
 
         guard let date else {
@@ -151,6 +135,15 @@ struct EmployeeCard: View {
         return date.formatted(
             .dateTime.month(.abbreviated).year()
         )
+    }
+
+    private func formattedSalary(_ salary: Double) -> String {
+
+        if salary >= 100000 {
+            return "₹\(String(format: "%.1f", salary / 100000)) LPA"
+        }
+
+        return "₹\(Int(salary))"
     }
 }
 
@@ -183,6 +176,5 @@ private struct EmployeeCardPreview: View {
             }
             .padding(.horizontal)
         }
-        .background(Color("background"))
     }
 }
