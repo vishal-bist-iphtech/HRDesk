@@ -12,54 +12,26 @@ extension PipelineView {
 
     var header: some View {
 
-        HStack(alignment: .center, spacing: 12) {
+        HStack(alignment: .center, spacing: 8) {
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 0) {
 
                 Text("Pipeline")
                     .font(.largeTitle.bold())
                     .foregroundStyle(Color("textPrimary"))
 
-                Menu {
-
-                    Button {
-                        selectedJobIndex = -1
-                    } label: {
-
-                        Text("All Jobs")
+                Picker("Select Job", selection: $selectedJobIndex) {
+                    Text("All Jobs").tag(-1)
+                    ForEach(Array(jobViewModel.jobs.enumerated()), id: \.element.objectID) { index, job in
+                        Text(job.title ?? "Untitled Job")
+                            .lineLimit(0)
+                            .truncationMode(.tail)
+                            .tag(index)
                     }
-
-                    Divider()
-
-                    ForEach(
-                        Array(jobViewModel.jobs.enumerated()),
-                        id: \.element.objectID
-                    ) { index, job in
-
-                        Button {
-                            selectedJobIndex = index
-                        } label: {
-
-                            Text(job.title ?? "Untitled Job")
-                        }
-                    }
-
-                } label: {
-
-                    HStack(spacing: 3) {
-
-                        Text(selectedJob)
-                            .font(.headline.weight(.medium))
-
-                        Image(
-                            systemName: "chevron.down"
-                        )
-                        .font(.caption.bold())
-                    }
-                    .foregroundStyle(
-                        Color("background")
-                    )
                 }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             Spacer()
