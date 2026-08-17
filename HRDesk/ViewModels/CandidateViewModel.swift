@@ -11,7 +11,7 @@ import CoreData
 
 final class CandidateViewModel: ObservableObject {
 
-    @Published var candidates: [Candidate] = []
+    @Published var candidates: [CandidateEntity] = []
 
     private let coreDataService = CoreDataService.shared
 
@@ -21,9 +21,7 @@ final class CandidateViewModel: ObservableObject {
 
     func fetchCandidates() {
 
-        candidates = coreDataService
-            .fetchCandidates()
-            .map { Candidate(entity: $0) }
+        candidates = coreDataService.fetchCandidates()
     }
 
     func addCandidate(
@@ -65,7 +63,7 @@ final class CandidateViewModel: ObservableObject {
     }
 
     func updateCandidate(
-        _ candidate: Candidate,
+        _ candidate: CandidateEntity,
         name: String,
         role: String,
         email: String,
@@ -82,7 +80,7 @@ final class CandidateViewModel: ObservableObject {
     ) {
 
         coreDataService.updateCandidate(
-            id: candidate.id,
+            id: candidate.id ?? UUID(),
             fullName: name,
             role: role,
             email: email,
@@ -90,7 +88,7 @@ final class CandidateViewModel: ObservableObject {
             stage: stage,
             experience: experience,
             matchScore: matchScore,
-            appliedDate: candidate.appliedDate,
+            appliedDate: candidate.appliedDate ?? "",
             noticePeriod: noticePeriod,
             expectedSalary: expectedSalary,
             about: about,
@@ -103,21 +101,21 @@ final class CandidateViewModel: ObservableObject {
     }
 
     func moveToStage(
-        _ candidate: Candidate,
+        _ candidate: CandidateEntity,
         stage: PipelineStage
     ) {
 
         coreDataService.updateCandidateStage(
-            id: candidate.id,
+            id: candidate.id ?? UUID(),
             stage: stage
         )
 
         fetchCandidates()
     }
 
-    func deleteCandidate(_ candidate: Candidate) {
+    func deleteCandidate(_ candidate: CandidateEntity) {
 
-        coreDataService.deleteCandidate(id: candidate.id)
+        coreDataService.deleteCandidate(id: candidate.id ?? UUID())
 
         fetchCandidates()
     }

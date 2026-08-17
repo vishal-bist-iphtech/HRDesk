@@ -12,6 +12,8 @@ struct ContentView: View {
     @StateObject private var todoViewModel = TodoViewModel()
     @StateObject private var jobViewModel = JobViewModel()
     @StateObject private var employeeViewModel = EmployeeViewModel()
+    @StateObject private var interviewViewModel = InterviewViewModel()
+    @StateObject private var candidateViewModel = CandidateViewModel()
 
     var body: some View {
         
@@ -44,7 +46,9 @@ struct ContentView: View {
             .tint(Color("background"))
             .environmentObject(todoViewModel)
             .environmentObject(jobViewModel)
-            .environmentObject(employeeViewModel)       
+            .environmentObject(employeeViewModel)
+            .environmentObject(interviewViewModel)
+            .environmentObject(candidateViewModel)       
     }
 }
 

@@ -11,6 +11,7 @@ struct AvatarView: View {
 
     let name: String
     var size: CGFloat = 48
+    var showsMatchBadge = false
 
     private var initials: String {
 
@@ -43,6 +44,18 @@ struct AvatarView: View {
             width: size,
             height: size
         )
+        .overlay(alignment: .bottomTrailing) {
+
+            if showsMatchBadge {
+
+                Image(systemName: "star.fill")
+                    .font(.system(size: size * 0.2))
+                    .foregroundStyle(.yellow)
+                    .padding(size * 0.05)
+                    .background(.white)
+                    .clipShape(Circle())
+            }
+        }
     }
 }
 

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ScoreRing: View {
 
-    let score: Int
+    let score: Int16
     var size: CGFloat = 46
     var lineWidth: CGFloat = 3.5
     var showsPercent = false

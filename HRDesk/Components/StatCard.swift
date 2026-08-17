@@ -27,7 +27,7 @@ struct StatCard: View {
                 
                 Text(title)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.primary.opacity(0.7))
+                    .foregroundStyle(.black.opacity(0.7))
             }
             
             Text(value)

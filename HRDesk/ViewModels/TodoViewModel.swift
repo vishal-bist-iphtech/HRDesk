@@ -31,13 +31,15 @@ final class TodoViewModel: ObservableObject {
     func addTodo(
         title: String,
         dueDate: Date,
-        priority: TodoItem.Priority
+        priority: TodoItem.Priority,
+        interviewID: UUID? = nil
     ) {
 
         coreDataService.addTodo(
             title: title,
             dueDate: dueDate,
-            priority: priority.rawValue
+            priority: priority.rawValue,
+            interviewID: interviewID
         )
 
         fetchTodos()
@@ -86,6 +88,37 @@ final class TodoViewModel: ObservableObject {
         )
 
         fetchTodos()
+    }
+
+    func setCompletion(
+        _ todo: TodoEntity,
+        isCompleted: Bool
+    ) {
+
+        guard todo.isCompleted != isCompleted else {
+            return
+        }
+
+        coreDataService.updateTodo(
+            todo,
+            title: todo.title ?? "",
+            dueDate: todo.dueDate ?? Date(),
+            priority: todo.priority ?? TodoItem.Priority.medium.rawValue,
+            isCompleted: isCompleted
+        )
+
+        fetchTodos()
+    }
+
+    func todo(withInterviewID id: UUID?) -> TodoEntity? {
+
+        guard let id else {
+            return nil
+        }
+
+        return todos.first {
+            $0.interviewID == id
+        }
     }
 
 }

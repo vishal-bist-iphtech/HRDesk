@@ -11,7 +11,7 @@ import CoreData
 
 final class InterviewViewModel: ObservableObject {
 
-    @Published var interviews: [Interview] = []
+    @Published var interviews: [InterviewEntity] = []
 
     private let coreDataService = CoreDataService.shared
 
@@ -21,9 +21,7 @@ final class InterviewViewModel: ObservableObject {
 
     func fetchInterviews() {
 
-        interviews = coreDataService
-            .fetchInterviews()
-            .map { Interview(entity: $0) }
+        interviews = coreDataService.fetchInterviews()
     }
 
     func scheduleInterview(
@@ -36,9 +34,9 @@ final class InterviewViewModel: ObservableObject {
         location: String,
         notes: String,
         interviewers: [Interviewer]
-    ) {
+    ) -> UUID? {
 
-        coreDataService.addInterview(
+        let interviewID = coreDataService.addInterview(
             candidateID: candidateID,
             candidateName: candidateName,
             candidateRole: candidateRole,
@@ -51,11 +49,53 @@ final class InterviewViewModel: ObservableObject {
         )
 
         fetchInterviews()
+
+        return interviewID
     }
 
-    func deleteInterview(_ interview: Interview) {
+    func deleteInterview(_ interview: InterviewEntity) {
 
-        coreDataService.deleteInterview(id: interview.id)
+        coreDataService.deleteInterview(id: interview.id ?? UUID())
+
+        fetchInterviews()
+    }
+
+    func markAsDone(_ interview: InterviewEntity) {
+
+        coreDataService.updateInterviewStatus(
+            id: interview.id ?? UUID(),
+            status: "Done"
+        )
+
+        fetchInterviews()
+    }
+
+    func setDone(
+        interviewID: UUID?,
+        done: Bool
+    ) {
+
+        guard let interviewID else {
+            return
+        }
+
+        coreDataService.updateInterviewStatus(
+            id: interviewID,
+            status: done ? "Done" : "Scheduled"
+        )
+
+        fetchInterviews()
+    }
+
+    func reschedule(
+        _ interview: InterviewEntity,
+        to date: Date
+    ) {
+
+        coreDataService.updateInterviewDate(
+            id: interview.id ?? UUID(),
+            date: date
+        )
 
         fetchInterviews()
     }

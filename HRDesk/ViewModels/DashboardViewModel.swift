@@ -22,10 +22,14 @@ final class DashboardViewModel: ObservableObject {
         let activeJobs = coreDataService.countActiveJobs()
         let candidates = coreDataService.countCandidates()
         let hired = coreDataService.countHiredCandidates()
+        let interviews = coreDataService.fetchInterviews()
+
+        interviewsToday = interviews.filter {
+            Calendar.current.isDateInToday($0.date ?? Date())
+        }.count
 
         openJobs = activeJobs
         applications = candidates
-        interviewsToday = interviewsToday
         hiredCandidates = hired
     }
 }
