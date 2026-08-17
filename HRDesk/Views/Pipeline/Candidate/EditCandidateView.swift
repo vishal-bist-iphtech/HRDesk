@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UniformTypeIdentifiers
+import CoreData
 
 struct EditCandidateView: View {
 
@@ -14,7 +15,7 @@ struct EditCandidateView: View {
 
     @EnvironmentObject private var candidateViewModel: CandidateViewModel
 
-    let candidate: Candidate
+    let candidate: CandidateEntity
 
     @State private var name: String
     @State private var role: String
@@ -32,22 +33,22 @@ struct EditCandidateView: View {
     @State private var resumeData: Data?
     @State private var resumeFileName: String?
 
-    init(candidate: Candidate) {
+    init(candidate: CandidateEntity) {
 
         self.candidate = candidate
 
-        _name = State(initialValue: candidate.name)
-        _role = State(initialValue: candidate.role)
-        _email = State(initialValue: candidate.email)
-        _phone = State(initialValue: candidate.phone)
+        _name = State(initialValue: candidate.fullName ?? "")
+        _role = State(initialValue: candidate.role ?? "")
+        _email = State(initialValue: candidate.email ?? "")
+        _phone = State(initialValue: candidate.phone ?? "")
         _stage = State(initialValue: candidate.stage)
-        _experience = State(initialValue: candidate.experience)
-        _noticePeriod = State(initialValue: candidate.noticePeriod)
-        _expectedSalary = State(initialValue: candidate.expectedSalary)
-        _about = State(initialValue: candidate.about)
-        _location = State(initialValue: candidate.location)
+        _experience = State(initialValue: candidate.experience ?? "")
+        _noticePeriod = State(initialValue: candidate.noticePeriod ?? "")
+        _expectedSalary = State(initialValue: candidate.expectedSalary ?? "")
+        _about = State(initialValue: candidate.about ?? "")
+        _location = State(initialValue: candidate.location ?? "")
         _website = State(initialValue: candidate.website ?? "")
-        _matchScore = State(initialValue: candidate.matchScore)
+        _matchScore = State(initialValue: Int(candidate.matchScore))
     }
 
     var body: some View {
@@ -245,24 +246,26 @@ struct EditCandidateView: View {
     NavigationStack {
 
         EditCandidateView(
-            candidate: Candidate(
-                id: UUID(),
-                name: "Sophia Carter",
-                role: "Product Designer",
-                email: "sophia@gmail.com",
-                phone: "(415) 123-4567",
-                experience: "3 Yrs Exp",
-                noticePeriod: "30 Days",
-                expectedSalary: "₹15 LPA",
-                location: "San Francisco, CA",
-                website: "https://www.sophiacarter.com",
-                about: "Product Designer with a passion for user-centered design.",
-                resume: Data(),
-                stage: .interview,
-                matchScore: 92,
-                appliedDate: "2 days ago",
-                jobID: nil,
-            )
+            candidate: {
+                let context = PersistenceController.preview.container.viewContext
+                let candidate = CandidateEntity(context: context)
+                candidate.id = UUID()
+                candidate.fullName = "Sophia Carter"
+                candidate.role = "Product Designer"
+                candidate.email = "sophia@gmail.com"
+                candidate.phone = "(415) 123-4567"
+                candidate.experience = "3 Yrs Exp"
+                candidate.noticePeriod = "30 Days"
+                candidate.expectedSalary = "₹15 LPA"
+                candidate.location = "San Francisco, CA"
+                candidate.website = "https://www.sophiacarter.com"
+                candidate.about = "Product Designer with a passion for user-centered design."
+                candidate.resumeData = Data()
+                candidate.status = PipelineStage.interview.rawValue
+                candidate.matchScore = 92
+                candidate.appliedDate = "2 days ago"
+                return candidate
+            }()
         )
         .environmentObject(CandidateViewModel())
     }

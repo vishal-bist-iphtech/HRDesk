@@ -17,7 +17,7 @@ struct PipelineView: View {
     @State var isSearching = false
     @State var sortAscending = false
     @State var showAddCandidate = false
-    @State var editingCandidate: Candidate?
+    @State var editingCandidate: CandidateEntity?
     @State var isKanban = false
     @State var newCandidateStage: PipelineStage = .applied
 
@@ -36,18 +36,18 @@ struct PipelineView: View {
             ?? "All Jobs"
     }
 
-    var selectedJobCandidates: [Candidate] {
+    var selectedJobCandidates: [CandidateEntity] {
 
         guard let selectedJobEntity else {
             return candidateViewModel.candidates
         }
 
         return candidateViewModel.candidates.filter {
-            $0.jobID == selectedJobEntity.id
+            $0.job?.id == selectedJobEntity.id
         }
     }
 
-    var filteredCandidates: [Candidate] {
+    var filteredCandidates: [CandidateEntity] {
 
         var result = selectedJobCandidates
 

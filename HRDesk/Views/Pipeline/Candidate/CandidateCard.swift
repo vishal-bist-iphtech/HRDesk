@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct CandidateCard: View {
 
-    let candidate: Candidate
+    let candidate: CandidateEntity
 
     var onMoveStage: ((PipelineStage) -> Void)?
     var onEdit: (() -> Void)?
@@ -22,18 +23,19 @@ struct CandidateCard: View {
             HStack(alignment: .top, spacing: 12) {
 
                 AvatarView(
-                    name: candidate.name,
-                    size: 44
+                    name: candidate.fullName ?? "Candidate",
+                    size: 48,
+                    showsMatchBadge: candidate.matchScore >= 80
                 )
 
                 VStack(alignment: .leading, spacing: 3) {
 
-                    Text(candidate.name)
+                    Text(candidate.fullName ?? "Candidate")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color("textPrimary"))
                         .lineLimit(1)
 
-                    Text(candidate.role)
+                    Text(candidate.role ?? "NA")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -114,7 +116,7 @@ struct CandidateCard: View {
 
                 StageBadge(stage: candidate.stage)
 
-                Text(candidate.appliedDate)
+                Text(candidate.appliedDate ?? "")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -129,13 +131,13 @@ struct CandidateCard: View {
                 HStack(spacing: 12) {
 
                     Label(
-                        candidate.experience,
+                        candidate.experience ?? "",
                         systemImage: "person"
                     )
                     .lineLimit(1)
 
                     Label(
-                        candidate.location,
+                        candidate.location ?? "",
                         systemImage: "mappin.and.ellipse"
                     )
                     .lineLimit(1)
@@ -167,28 +169,51 @@ struct CandidateCard: View {
 }
 
 #Preview {
-    VStack(spacing: 12) {
-        CandidateCard(
-            candidate: Candidate(
-                id: UUID(),
-                name: "Sophia Carter",
-                role: "Product Designer",
-                email: "sophia@gmail.com",
-                phone: "(415) 123-4567",
-                experience: "3 Yrs Exp",
-                noticePeriod: "30 Days",
-                expectedSalary: "₹15 LPA",
-                location: "San Francisco, CA",
-                website: "https://www.sophiacarter.com",
-                about: "Product Designer with a passion for user-centered design.",
-                resume: Data(),
-                stage: .interview,
-                matchScore: 92,
-                appliedDate: "2 days ago",
-                jobID: nil,
-            )
-        )
+    CandidateCardPreview()
+}
+
+private struct CandidateCardPreview: View {
+    
+    private let candidate: CandidateEntity
+    
+    init() {
+        let context = PersistenceController.preview.container.viewContext
+        let candidate = CandidateEntity(context: context)
+        candidate.id = UUID()
+        candidate.fullName = "Sophia Carter"
+        candidate.role = "Product Designer"
+        candidate.email = "sophia.carter@hrdesk.com"
+        candidate.phone = "(415) 123-4567"
+        candidate.experience = "3 Yrs Exp"
+        candidate.noticePeriod = "30 Days"
+        candidate.expectedSalary = "₹15 LPA"
+        candidate.location = "San Francisco, CA"
+        candidate.website = "https://www.sophiacarter.com"
+        candidate.about = "Product Designer with a passion for user-centered design."
+        candidate.resumeData = Data()
+        candidate.status = PipelineStage.interview.rawValue
+        candidate.matchScore = 92
+        candidate.appliedDate = "2 days ago"
+        self.candidate = candidate
     }
-    .padding(.horizontal)
-    .background(Color("background"))
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 12) {
+                CandidateCard(
+                    candidate: candidate,
+                    onMoveStage: { stage in
+                        print("Moved to stage: \(stage.title)")
+                    },
+                    onEdit: {
+                        print("Edit tapped")
+                    },
+                    onDelete: {
+                        print("Delete tapped")
+                    }
+                )
+            }
+            .padding(.horizontal)
+        }
+    }
 }

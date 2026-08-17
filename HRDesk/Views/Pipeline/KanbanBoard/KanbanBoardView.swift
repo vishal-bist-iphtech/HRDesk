@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct KanbanBoardView: View {
 
-    let candidates: [Candidate]
+    let candidates: [CandidateEntity]
 
-    var onMoveStage: (Candidate, PipelineStage) -> Void
+    var onMoveStage: (CandidateEntity, PipelineStage) -> Void
     var onAddCandidate: ((PipelineStage) -> Void)?
 
     private let stages: [PipelineStage] = [
@@ -45,14 +46,14 @@ struct KanbanBoardView: View {
 struct KanbanStageColumn: View {
 
     let stage: PipelineStage
-    let allCandidates: [Candidate]
+    let allCandidates: [CandidateEntity]
 
-    var onMoveStage: (Candidate, PipelineStage) -> Void
+    var onMoveStage: (CandidateEntity, PipelineStage) -> Void
     var onAddCandidate: ((PipelineStage) -> Void)?
 
     private let columnHeight: CGFloat = 310
 
-    private var stageCandidates: [Candidate] {
+    private var stageCandidates: [CandidateEntity] {
 
         allCandidates.filter {
             $0.stage == stage
@@ -82,7 +83,7 @@ struct KanbanStageColumn: View {
                             KanbanCandidateCard(
                                 candidate: candidate
                             )
-                            .draggable(candidate.id.uuidString)
+                            .draggable(candidate.id?.uuidString ?? "")
                         }
                         .buttonStyle(.plain)
                     }
@@ -162,48 +163,59 @@ struct KanbanStageColumn: View {
 
 
 #Preview {
+    KanbanBoardPreview()
+}
 
-    KanbanBoardView(
-        candidates: [
-            Candidate(
-                id: UUID(),
-                name: "Sophia Carter",
-                role: "Product Designer",
-                email: "sophia@gmail.com",
-                phone: "(415) 123-4567",
-                experience: "3 Yrs Exp",
-                noticePeriod: "30 Days",
-                expectedSalary: "₹15 LPA",
-                location: "San Francisco, CA",
-                website: "https://www.sophiacarter.com",
-                about: "Product Designer with a passion for user-centered design.",
-                resume: Data(),
-                stage: .interview,
-                matchScore: 92,
-                appliedDate: "2 days ago",
-                jobID: nil,
-            ),
-            Candidate(
-                id: UUID(),
-                name: "Liam Anderson",
-                role: "Product Designer",
-                email: "liam@gmail.com",
-                phone: "(212) 555-1234",
-                experience: "4 Yrs Exp",
-                noticePeriod: "45 Days",
-                expectedSalary: "₹14 LPA",
-                location: "New York, NY",
-                website: nil,
-                about: "Product Designer focused on design systems.",
-                resume: Data(),
-                stage: .screening,
-                matchScore: 88,
-                appliedDate: "1 day ago",
-                jobID: nil,
-            )
-        ],
-        onMoveStage: { _, _ in }
-    )
-    .padding()
-    .background(Color("background"))
+private struct KanbanBoardPreview: View {
+
+    private let candidates: [CandidateEntity]
+
+    init() {
+        let context = PersistenceController.preview.container.viewContext
+
+        let candidate = CandidateEntity(context: context)
+        candidate.id = UUID()
+        candidate.fullName = "Sophia Carter"
+        candidate.role = "Product Designer"
+        candidate.email = "sophia@gmail.com"
+        candidate.phone = "(415) 123-4567"
+        candidate.experience = "3 Yrs Exp"
+        candidate.noticePeriod = "30 Days"
+        candidate.expectedSalary = "₹15 LPA"
+        candidate.location = "San Francisco, CA"
+        candidate.website = "https://www.sophiacarter.com"
+        candidate.about = "Product Designer with a passion for user-centered design."
+        candidate.resumeData = Data()
+        candidate.status = PipelineStage.interview.rawValue
+        candidate.matchScore = 92
+        candidate.appliedDate = "2 days ago"
+
+        let candidate2 = CandidateEntity(context: context)
+        candidate2.id = UUID()
+        candidate2.fullName = "Liam Anderson"
+        candidate2.role = "Product Designer"
+        candidate2.email = "liam@gmail.com"
+        candidate2.phone = "(212) 555-1234"
+        candidate2.experience = "4 Yrs Exp"
+        candidate2.noticePeriod = "45 Days"
+        candidate2.expectedSalary = "₹14 LPA"
+        candidate2.location = "New York, NY"
+        candidate2.website = nil
+        candidate2.about = "Product Designer focused on design systems."
+        candidate2.resumeData = Data()
+        candidate2.status = PipelineStage.screening.rawValue
+        candidate2.matchScore = 88
+        candidate2.appliedDate = "1 day ago"
+
+        self.candidates = [candidate, candidate2]
+    }
+
+    var body: some View {
+        KanbanBoardView(
+            candidates: candidates,
+            onMoveStage: { _, _ in }
+        )
+        .padding()
+        .background(Color("background"))
+    }
 }

@@ -65,7 +65,8 @@ final class CoreDataService {
     func addTodo(
         title: String,
         dueDate: Date,
-        priority: String
+        priority: String,
+        interviewID: UUID? = nil
     ) {
 
         let todo = TodoEntity(context: context)
@@ -76,6 +77,7 @@ final class CoreDataService {
         todo.priority = priority
         todo.isCompleted = false
         todo.createdAt = Date()
+        todo.interviewID = interviewID
 
         saveContext()
     }
@@ -260,7 +262,7 @@ final class CoreDataService {
         location: String,
         notes: String,
         interviewers: [Interviewer]
-    ) {
+    ) -> UUID? {
 
         let interview = InterviewEntity(context: context)
 
@@ -283,6 +285,8 @@ final class CoreDataService {
             .joined(separator: "|")
 
         saveContext()
+
+        return interview.id
     }
 
     func fetchInterviews() -> [InterviewEntity] {
@@ -323,6 +327,55 @@ final class CoreDataService {
         }
 
         context.delete(interview)
+
+        saveContext()
+    }
+
+    func updateInterviewStatus(
+        id: UUID,
+        status: String
+    ) {
+
+        let request: NSFetchRequest<InterviewEntity> =
+            InterviewEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            id as CVarArg
+        )
+
+        request.fetchLimit = 1
+
+        guard let interview = try? context.fetch(request).first else {
+            return
+        }
+
+        interview.status = status
+
+        saveContext()
+    }
+
+    func updateInterviewDate(
+        id: UUID,
+        date: Date
+    ) {
+
+        let request: NSFetchRequest<InterviewEntity> =
+            InterviewEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            id as CVarArg
+        )
+
+        request.fetchLimit = 1
+
+        guard let interview = try? context.fetch(request).first else {
+            return
+        }
+
+        interview.date = date
+        interview.status = "Scheduled"
 
         saveContext()
     }
@@ -497,7 +550,7 @@ final class CoreDataService {
         candidate.phone = phone
         candidate.status = stage.rawValue
         candidate.experience = experience
-        candidate.matchScore = Int64(matchScore)
+        candidate.matchScore = Int16(matchScore)
         candidate.appliedDate = appliedDate
         candidate.noticePeriod = noticePeriod
         candidate.expectedSalary = expectedSalary
@@ -538,7 +591,7 @@ final class CoreDataService {
         candidate.phone = phone
         candidate.status = stage.rawValue
         candidate.experience = experience
-        candidate.matchScore = Int64(matchScore)
+        candidate.matchScore = Int16(matchScore)
         candidate.appliedDate = appliedDate
         candidate.noticePeriod = noticePeriod
         candidate.expectedSalary = expectedSalary

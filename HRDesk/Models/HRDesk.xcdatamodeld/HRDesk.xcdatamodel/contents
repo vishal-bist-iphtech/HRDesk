@@ -9,7 +9,7 @@
         <attribute name="fullName" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="location" attributeType="String"/>
-        <attribute name="matchScore" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="matchScore" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="noticePeriod" attributeType="String" defaultValueString=""/>
         <attribute name="phone" attributeType="String"/>
         <attribute name="resumeData" attributeType="Binary"/>
@@ -61,6 +61,7 @@
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="dueDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="interviewID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="priority" attributeType="String"/>
         <attribute name="title" attributeType="String"/>

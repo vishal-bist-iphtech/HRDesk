@@ -13,9 +13,9 @@ struct CandidatesView: View {
 
     @State private var searchText = ""
     @State private var showAddCandidate = false
-    @State private var editingCandidate: Candidate?
+    @State private var editingCandidate: CandidateEntity?
 
-    private var filteredCandidates: [Candidate] {
+    private var filteredCandidates: [CandidateEntity] {
 
         guard !searchText.isEmpty else {
             return candidateViewModel.candidates
@@ -24,8 +24,8 @@ struct CandidatesView: View {
         return candidateViewModel.candidates.filter {
 
             $0.name.localizedCaseInsensitiveContains(searchText)
-                || $0.role.localizedCaseInsensitiveContains(searchText)
-                || $0.email.localizedCaseInsensitiveContains(searchText)
+                || $0.role?.localizedCaseInsensitiveContains(searchText) == true
+                || $0.email?.localizedCaseInsensitiveContains(searchText) == true
         }
     }
 

@@ -10,7 +10,7 @@ import PDFKit
 
 struct CandidateDetailView: View {
 
-    let candidate: Candidate
+    let candidate: CandidateEntity
 
     @EnvironmentObject private var candidateViewModel: CandidateViewModel
     @Environment(\.dismiss) private var dismiss
@@ -108,7 +108,8 @@ extension CandidateDetailView {
 
             AvatarView(
                 name: candidate.name,
-                size: 76
+                size: 76,
+                showsMatchBadge: candidate.matchScore >= 80
             )
 
             VStack(
@@ -120,7 +121,7 @@ extension CandidateDetailView {
                     .font(.headline.weight(.bold))
                     .foregroundStyle(Color("textPrimary"))
 
-                Text(candidate.role)
+                Text(candidate.role ?? "")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
@@ -128,7 +129,7 @@ extension CandidateDetailView {
 
                     StageBadge(stage: candidate.stage)
 
-                    Text(candidate.appliedDate)
+                    Text(candidate.appliedDate ?? "")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -247,7 +248,7 @@ extension CandidateDetailView {
                     .font(.title3.weight(.medium))
                     .foregroundStyle(Color("textPrimary").opacity(0.8))
 
-                Text(candidate.about)
+                Text(candidate.about ?? "")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 
@@ -521,29 +522,32 @@ extension CandidateDetailView {
             .disabled(nextStage == nil)
             .opacity(nextStage == nil ? 0.4 : 1)
 
-            NavigationLink {
+            if candidate.stage == .applied || candidate.stage == .screening {
 
-                ScheduleInterviewView(
-                    candidate: candidate
-                )
+                NavigationLink {
 
-            } label: {
-
-                Text("Schedule Interview")
-                    .font(
-                        .subheadline.weight(.semibold)
+                    ScheduleInterviewView(
+                        candidate: candidate
                     )
-                    .foregroundStyle(.white)
-                    .frame(
-                        maxWidth: .infinity
-                    )
-                    .frame(height: 46)
-                    .background(
-                        RoundedRectangle(
-                            cornerRadius: 12
+
+                } label: {
+
+                    Text("Schedule Interview")
+                        .font(
+                            .subheadline.weight(.semibold)
                         )
-                        .fill(Color("background"))
-                    )
+                        .foregroundStyle(.white)
+                        .frame(
+                            maxWidth: .infinity
+                        )
+                        .frame(height: 46)
+                        .background(
+                            RoundedRectangle(
+                                cornerRadius: 12
+                            )
+                            .fill(Color("background"))
+                        )
+                }
             }
         }
         .padding()

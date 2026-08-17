@@ -10,7 +10,7 @@ import SwiftUI
 
 struct KanbanCandidateCard: View {
 
-    let candidate: Candidate
+    let candidate: CandidateEntity
 
     var body: some View {
 
@@ -20,7 +20,8 @@ struct KanbanCandidateCard: View {
 
                 AvatarView(
                     name: candidate.name,
-                    size: 36
+                    size: 36,
+                    showsMatchBadge: candidate.matchScore >= 80
                 )
 
                 Text(candidate.name)
@@ -32,7 +33,7 @@ struct KanbanCandidateCard: View {
             HStack(spacing: 4) {
 
                 Label(
-                    candidate.experience,
+                    candidate.experience ?? "",
                     systemImage: "briefcase"
                 )
                 .font(.system(size: 12))
@@ -47,7 +48,7 @@ struct KanbanCandidateCard: View {
             .foregroundColor(.secondary)
 
             Label(
-                candidate.appliedDate,
+                candidate.appliedDate ?? "",
                 systemImage: "clock"
             )
             .font(.system(size: 11))
