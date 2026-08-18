@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct EmployeesView: View {
 
@@ -35,6 +36,38 @@ struct EmployeesView: View {
 
     var body: some View {
         NavigationStack {
+            
+            VStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 12) {
+                                    
+                        Text("Employees")
+                            .font(.largeTitle.bold())
+                        
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundStyle(.secondary)
+                            
+                            TextField("Search employees", text: $searchText)
+                                .textFieldStyle(.plain)
+                            
+                            if !searchText.isEmpty {
+                                Button {
+                                    searchText = ""
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                        .padding(10)
+                        .background(Color(.systemGray6))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+                    .background(Color(.systemBackground))
+            }
             
             ZStack(alignment: .bottomTrailing) {
                 
@@ -100,13 +133,7 @@ struct EmployeesView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Employees")
-            .navigationBarTitleDisplayMode(.large)
-            .searchable(
-                text: $searchText,
-                placement: .navigationBarDrawer,
-                prompt: "Search employees"
-            )
+            .navigationBarHidden(true)
             .sheet(isPresented: $showAddEmployee) {
 
                 NavigationStack {
