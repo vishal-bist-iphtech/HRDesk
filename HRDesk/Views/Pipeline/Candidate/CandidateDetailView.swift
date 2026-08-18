@@ -478,75 +478,117 @@ extension CandidateDetailView {
 
 extension CandidateDetailView {
 
+    private var hasScheduledInterview: Bool {
+
+        guard let interviews = candidate.interviews as? Set<InterviewEntity> else {
+            return false
+        }
+
+        return interviews.contains {
+            ($0.status ?? "Scheduled") != "Done"
+        }
+    }
+
     private var bottomActions: some View {
 
         HStack(spacing: 10) {
 
-            Button {
-
-                guard let nextStage else {
-                    return
-                }
-
-                candidateViewModel.moveToStage(
-                    candidate,
-                    stage: nextStage
-                )
-
-            } label: {
-
-                Label(
-                    nextStage == nil
-                    ? "Move Stage"
-                    : "Move to \(nextStage?.title ?? "stage")",
-                    systemImage: "arrow.right"
-                )
-                .font(
-                    .subheadline.weight(.semibold)
-                )
-                .foregroundStyle(Color("background"))
-                .frame(maxWidth: .infinity)
-                .frame(height: 46)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.08))
-                    )
-                .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                    .stroke(
-                        Color("background").opacity(0.6),
-                        lineWidth: 1.5
-                    )
-                }
-            }
-            .disabled(nextStage == nil)
-            .opacity(nextStage == nil ? 0.4 : 1)
-
-            if candidate.stage == .applied || candidate.stage == .screening {
+            if hasScheduledInterview {
 
                 NavigationLink {
 
-                    ScheduleInterviewView(
-                        candidate: candidate
+                    UpcomingInterviewsView()
+
+                } label: {
+
+                    Label(
+                        "Interview Scheduled",
+                        systemImage: "calendar.badge.checkmark"
+                    )
+                    .font(
+                        .subheadline.weight(.semibold)
+                    )
+                    .foregroundStyle(.white)
+                    .frame(
+                        maxWidth: .infinity
+                    )
+                    .frame(height: 46)
+                    .background(
+                        RoundedRectangle(
+                            cornerRadius: 12
+                        )
+                        .fill(Color("background"))
+                    )
+                }
+
+            } else {
+
+                Button {
+
+                    guard let nextStage else {
+                        return
+                    }
+
+                    candidateViewModel.moveToStage(
+                        candidate,
+                        stage: nextStage
                     )
 
                 } label: {
 
-                    Text("Schedule Interview")
-                        .font(
-                            .subheadline.weight(.semibold)
+                    Label(
+                        nextStage == nil
+                        ? "Move Stage"
+                        : "Move to \(nextStage?.title ?? "stage")",
+                        systemImage: "arrow.right"
+                    )
+                    .font(
+                        .subheadline.weight(.semibold)
+                    )
+                    .foregroundStyle(Color("background"))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 46)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.gray.opacity(0.08))
                         )
-                        .foregroundStyle(.white)
-                        .frame(
-                            maxWidth: .infinity
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 12)
+                        .stroke(
+                            Color("background").opacity(0.6),
+                            lineWidth: 1.5
                         )
-                        .frame(height: 46)
-                        .background(
-                            RoundedRectangle(
-                                cornerRadius: 12
+                    }
+                }
+                .disabled(nextStage == nil)
+                .opacity(nextStage == nil ? 0.4 : 1)
+
+                if candidate.stage == .applied || candidate.stage == .screening {
+
+                    NavigationLink {
+
+                        InterviewView(
+                            candidate: candidate
+                        )
+
+                    } label: {
+
+                        Text("Schedule Interview")
+                            .font(
+                                .subheadline.weight(.semibold)
                             )
-                            .fill(Color("background"))
-                        )
+                            .foregroundStyle(.white)
+                            .frame(
+                                maxWidth: .infinity
+                            )
+                            .frame(height: 46)
+                            .background(
+                                RoundedRectangle(
+                                    cornerRadius: 12
+                                )
+                                .fill(Color("background"))
+                            )
+                    }
                 }
             }
         }
