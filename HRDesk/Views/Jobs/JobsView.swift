@@ -37,84 +37,108 @@ struct JobsView: View {
 
         NavigationStack {
 
-            ZStack(alignment: .bottomTrailing) {
-
-                Group {
-
-                    if jobViewModel.jobs.isEmpty {
-
-                        ContentUnavailableView(
-                            "No Jobs Posted",
-                            systemImage: "briefcase",
-                            description: Text(
-                                "Tap + to post your first job."
-                            )
-                        )
-
-                    } else if filteredJobs.isEmpty {
-
-                        ContentUnavailableView(
-                            "No Results",
-                            systemImage: "magnifyingglass",
-                            description: Text(
-                                "No jobs match \"\(searchText)\"."
-                            )
-                        )
-
-                    } else {
-
-                        ScrollView {
-
-                            LazyVStack(spacing: 16) {
-
-                                ForEach(filteredJobs,id: \.objectID) { job in
-
-                                    NavigationLink {
-                                        JobDetailView( job: job)
-                                    } label: {
-
-                                        JobCard(job: job)
-                                    }
-                                    .buttonStyle(.plain)
-                                }
+            VStack(spacing: 0) {
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    
+                    
+                    HStack {
+                        Text("Jobs")
+                            .font(.largeTitle.bold())
+                    }
+                    
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.secondary)
+                        
+                        TextField("Search jobs", text: $searchText)
+                            .textFieldStyle(.plain)
+                        
+                        if !searchText.isEmpty {
+                            Button {
+                                searchText = ""
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.secondary)
                             }
-                            .padding()
                         }
                     }
+                    .padding(10)
+                    .background(Color(.systemGray6))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
-
-                Button {
-
-                    showAddJob = true
-
-                } label: {
-
-                    Image(systemName: "plus")
-                        .font(.title2)
-                        .foregroundStyle(.white)
-                        .frame(
-                            width: 60,
-                            height: 60
-                        )
-                        .background(
-                            Color("background")
-                        )
-                        .clipShape(Circle())
-                        .shadow(radius: 8)
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+                .background(Color(.systemBackground))
+                
+                // MARK: - Main Content
+                ZStack(alignment: .bottomTrailing) {
+                    
+                    Group {
+                        
+                        if jobViewModel.jobs.isEmpty {
+                            
+                            ContentUnavailableView(
+                                "No Jobs Posted",
+                                systemImage: "briefcase",
+                                description: Text(
+                                    "Tap + to post your first job."
+                                )
+                            )
+                            
+                        } else if filteredJobs.isEmpty {
+                            
+                            ContentUnavailableView(
+                                "No Results",
+                                systemImage: "magnifyingglass",
+                                description: Text(
+                                    "No jobs match \"\(searchText)\"."
+                                )
+                            )
+                            
+                        } else {
+                            
+                            ScrollView {
+                                
+                                LazyVStack(spacing: 16) {
+                                    
+                                    ForEach(filteredJobs, id: \.objectID) { job in
+                                        
+                                        NavigationLink {
+                                            JobDetailView(job: job)
+                                        } label: {
+                                            
+                                            JobCard(job: job)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                .padding()
+                            }
+                        }
+                    }
+                    
+                    Button {
+                        showAddJob = true
+                    } label: {
+                        
+                        Image(systemName: "plus")
+                            .font(.title2)
+                            .foregroundStyle(.white)
+                            .frame(width: 60, height: 60)
+                            .background(Color("background"))
+                            .clipShape(Circle())
+                            .shadow(radius: 8)
+                    }
+                    .padding()
                 }
-                .padding()
             }
-            .searchable(
-                text: $searchText,
-                placement: .navigationBarDrawer,
-                prompt: "Search jobs"
-            )
-            .navigationTitle("Jobs")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarHidden(true)
             .sheet(
                 isPresented: $showAddJob
             ) {
-
+                
                 NavigationStack {
                     AddJobView()
                 }
@@ -129,8 +153,7 @@ struct JobsView: View {
 
 #Preview {
 
-    NavigationStack {
-
+    NavigationStack {        
         JobsView()
             .environmentObject(
                 JobViewModel()

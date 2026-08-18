@@ -68,7 +68,14 @@ struct AddJobView: View {
                         .frame(maxWidth: .infinity)
                         .fontWeight(.semibold)
                 }
-                .disabled(jobTitle.isEmpty)
+                .disabled(jobTitle.isEmpty ||
+                          department.isEmpty ||
+                          location.isEmpty ||
+                          employementType.isEmpty ||
+                          experience.isEmpty ||
+                          salary.isEmpty ||
+                          description.isEmpty
+                    )
             }
         }
         .navigationTitle("Post a Job")
