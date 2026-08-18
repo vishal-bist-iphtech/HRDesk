@@ -24,23 +24,79 @@ final class CoreDataService {
 
     private func saveContext() {
 
-        guard context.hasChanges else {
-            return
-        }
+        guard context.hasChanges else {return}
 
         do {
             try context.save()
         } catch {
-            let nsError = error as NSError
-            print(
-                "Core Data Save Error:",
-                nsError,
-                nsError.userInfo
-            )
+            let error = error as NSError
+            print("Core Data Save Error:",error,error.userInfo)
         }
     }
+    
+    
 
-    // MARK: ------------> Todo
+    // MARK: -------------> Auth
+
+    func addUser(
+        fullName: String,
+        email: String,
+        password: String
+    ) -> UserEntity? {
+
+        let request: NSFetchRequest<UserEntity> =
+            UserEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "email ==[c] %@",
+            email
+        )
+
+        if let existing = try? context.fetch(request).first {
+            return existing
+        }
+
+        let user = UserEntity(context: context)
+
+        user.id = UUID()
+        user.fullName = fullName
+        user.email = email
+        user.password = password
+        user.createdAt = Date()
+
+        saveContext()
+
+        return user
+    }
+
+    func authenticateUser(
+        email: String,
+        password: String
+    ) -> UserEntity? {
+
+        let request: NSFetchRequest<UserEntity> =
+            UserEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "email ==[c] %@ AND password == %@",
+            email,
+            password
+        )
+
+        do {
+            return try context.fetch(request).first
+        } catch {
+            print(
+                "Failed to authenticate user:",
+                error.localizedDescription
+            )
+
+            return nil
+        }
+    }
+    
+
+    // MARK: ---------------> Todo
 
     func fetchTodos() -> [TodoEntity] {
 
@@ -104,6 +160,7 @@ final class CoreDataService {
 
         saveContext()
     }
+    
 
     // MARK: -------------->  Jobs
 
@@ -121,7 +178,7 @@ final class CoreDataService {
         let job = JobEntity(context: context)
 
         job.id = UUID()
-        job.title = title.lowercased()
+        job.title = title
         job.department = department
         job.location = location
         job.employmentType = employmentType
@@ -164,7 +221,7 @@ final class CoreDataService {
         status: String
     ) {
 
-        job.title = title.lowercased()
+        job.title = title
         job.department = department
         job.location = location
         job.employmentType = employmentType
@@ -192,6 +249,7 @@ final class CoreDataService {
 
         saveContext()
     }
+    
 
     // MARK: - Employees
 
@@ -249,27 +307,24 @@ final class CoreDataService {
 
         saveContext()
     }
+    
 
-    // MARK: - Interviews
+    // MARK: -----------------> Interviews
 
     func addInterview(
         candidateID: UUID?,
-        candidateName: String,
-        candidateRole: String,
         interviewType: String,
         date: Date,
         duration: String,
         location: String,
         notes: String,
-        interviewers: [Interviewer]
+        interviewerIDs: [UUID]
     ) -> UUID? {
 
         let interview = InterviewEntity(context: context)
 
         interview.id = UUID()
-        interview.candidateID = candidateID
-        interview.candidateName = candidateName
-        interview.candidateRole = candidateRole
+       
         interview.interviewType = interviewType
         interview.date = date
         interview.duration = duration
@@ -277,12 +332,40 @@ final class CoreDataService {
         interview.notes = notes
         interview.status = "Scheduled"
         interview.createdAt = Date()
-        interview.interviewerNames = interviewers
-            .map(\.name)
-            .joined(separator: "|")
-        interview.interviewerRoles = interviewers
-            .map(\.role)
-            .joined(separator: "|")
+        
+        if let candidateID {
+            
+            let request: NSFetchRequest<CandidateEntity> = CandidateEntity.fetchRequest()
+            
+            request.predicate = NSPredicate(
+                format: "id == %@",
+                candidateID as CVarArg
+            )
+            
+            request.fetchLimit = 1
+            
+            if let candidate = try? context.fetch(request).first {
+                interview.candidate = candidate
+            } else {
+                print("Candidate not found:", candidateID)
+            }
+        }
+        
+        for interviewerID in interviewerIDs {
+            
+            let request: NSFetchRequest<EmployeeEntity> = EmployeeEntity.fetchRequest()
+            
+            request.predicate = NSPredicate(
+                format: "id == %@",
+                interviewerID as CVarArg
+            )
+            
+            request.fetchLimit = 1
+            
+            if let employee = try? context.fetch(request).first {
+                interview.addToInterviewer(employee)
+            }
+        }
 
         saveContext()
 
@@ -355,6 +438,61 @@ final class CoreDataService {
         saveContext()
     }
 
+    func updateInterview(
+        id: UUID,
+        interviewType: String,
+        date: Date,
+        duration: String,
+        location: String,
+        notes: String,
+        interviewerIDs: [UUID]
+    ) {
+
+        let request: NSFetchRequest<InterviewEntity> =
+            InterviewEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            id as CVarArg
+        )
+
+        request.fetchLimit = 1
+
+        guard let interview = try? context.fetch(request).first else {
+            return
+        }
+
+        interview.interviewType = interviewType
+        interview.date = date
+        interview.duration = duration
+        interview.location = location
+        interview.notes = notes
+        interview.status = "Scheduled"
+
+        if let existing = interview.interviewer {
+            interview.removeFromInterviewer(existing)
+        }
+
+        for interviewerID in interviewerIDs {
+
+            let employeeRequest: NSFetchRequest<EmployeeEntity> =
+                EmployeeEntity.fetchRequest()
+
+            employeeRequest.predicate = NSPredicate(
+                format: "id == %@",
+                interviewerID as CVarArg
+            )
+
+            employeeRequest.fetchLimit = 1
+
+            if let employee = try? context.fetch(employeeRequest).first {
+                interview.addToInterviewer(employee)
+            }
+        }
+
+        saveContext()
+    }
+
     func updateInterviewDate(
         id: UUID,
         date: Date
@@ -379,67 +517,9 @@ final class CoreDataService {
 
         saveContext()
     }
+    
 
-    // MARK: - Auth
-
-    func addUser(
-        fullName: String,
-        email: String,
-        password: String
-    ) -> UserEntity? {
-
-        let request: NSFetchRequest<UserEntity> =
-            UserEntity.fetchRequest()
-
-        request.predicate = NSPredicate(
-            format: "email ==[c] %@",
-            email
-        )
-
-        if let existing = try? context.fetch(request).first {
-            return existing
-        }
-
-        let user = UserEntity(context: context)
-
-        user.id = UUID()
-        user.fullName = fullName
-        user.email = email
-        user.password = password
-        user.createdAt = Date()
-
-        saveContext()
-
-        return user
-    }
-
-    func authenticateUser(
-        email: String,
-        password: String
-    ) -> UserEntity? {
-
-        let request: NSFetchRequest<UserEntity> =
-            UserEntity.fetchRequest()
-
-        request.predicate = NSPredicate(
-            format: "email ==[c] %@ AND password == %@",
-            email,
-            password
-        )
-
-        do {
-            return try context.fetch(request).first
-        } catch {
-            print(
-                "Failed to authenticate user:",
-                error.localizedDescription
-            )
-
-            return nil
-        }
-    }
-
-    // MARK: - Dashboard Counts
+    // MARK: ----------------> Dashboard Counts
 
     func countActiveJobs() -> Int {
 
@@ -581,9 +661,7 @@ final class CoreDataService {
         resume: Data?
     ) {
 
-        guard let candidate = candidate(withID: id) else {
-            return
-        }
+        guard let candidate = candidate(withID: id) else {return}
 
         candidate.fullName = fullName
         candidate.role = role
@@ -608,9 +686,7 @@ final class CoreDataService {
         stage: PipelineStage
     ) {
 
-        guard let candidate = candidate(withID: id) else {
-            return
-        }
+        guard let candidate = candidate(withID: id) else {return}
 
         candidate.status = stage.rawValue
 
@@ -619,9 +695,7 @@ final class CoreDataService {
 
     func deleteCandidate(id: UUID) {
 
-        guard let candidate = candidate(withID: id) else {
-            return
-        }
+        guard let candidate = candidate(withID: id) else {return}
 
         context.delete(candidate)
 
