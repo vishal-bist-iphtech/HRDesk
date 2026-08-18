@@ -9,16 +9,12 @@ import SwiftUI
 
 struct InterviewDetailView: View {
 
-    @Binding var interviewType: String
-    @Binding var selectedDate: Date
-    @Binding var selectedTime: Date
-    @Binding var duration: String
-    @Binding var location: String
-    @Binding var notes: String
+    @EnvironmentObject private var interviewViewModel: InterviewViewModel
+
     @Binding var interviewers: [Interviewer]
-
     var onAddInterviewer: () -> Void
-
+    
+    
     private let interviewTypes = [
         "Design Interview",
         "Technical Interview",
@@ -54,42 +50,40 @@ struct InterviewDetailView: View {
                     ForEach(interviewTypes, id: \.self) { type in
 
                         Button(type) {
-                            interviewType = type
+                            interviewViewModel.interviewType = type
                         }
                     }
 
                 } label: {
 
-                    FieldRow(icon: "laptopcomputer") {
+                    HStack(spacing: 10) {
 
-                        HStack {
+                        Image(systemName: "laptopcomputer")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Color("background"))
+                            .frame(width: 18)
+                        
+                        Text(interviewViewModel.interviewType)
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Color("textPrimary"))
 
-                            Text(interviewType)
-                                .font(
-                                    .system(
-                                        size: 13,
-                                        weight: .medium
-                                    )
-                                )
-                                .foregroundStyle(
-                                    Color("textPrimary")
-                                )
+                        Spacer()
 
-                            Spacer()
-
-                            Image(
-                                systemName: "chevron.down"
-                            )
-                            .font(
-                                .system(
-                                    size: 10,
-                                    weight: .semibold
-                                )
-                            )
-                            .foregroundStyle(.secondary)
-                        }
+                        Image(systemName: "chevron.down")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
-                }
+                    .padding(.horizontal, 12)
+                    .frame(minHeight: 46)
+                    .background(Color(.systemGray6).opacity(0.6))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 10,style: .continuous)
+                        .stroke(Color.gray.opacity(0.15),lineWidth: 1)
+                    }
+                    .clipShape(
+                        RoundedRectangle(cornerRadius: 10,style: .continuous)
+                        )
+                    }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 14)
@@ -118,97 +112,80 @@ struct InterviewDetailView: View {
                         onAddInterviewer()
                     } label: {
 
-                        FieldRow(icon: "person.badge.plus") {
+                        HStack(spacing: 10) {
 
+                            Image(systemName: "person.badge.plus")
+                                .font(.subheadline)
+                                .foregroundStyle(Color("background"))
+                                .frame(width: 18)
+                            
                             Text("Add Interviewer")
-                                .font(
-                                    .system(
-                                        size: 13,
-                                        weight: .medium
-                                    )
-                                )
-                                .foregroundStyle(
-                                    Color("textPrimary")
-                                )
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(Color("textPrimary"))
                         }
+                        .padding(.horizontal, 12)
+                        .frame(minHeight: 46)
+                        .background(Color(.systemGray6).opacity(0.6))
+                        .overlay {
+
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(Color.gray.opacity(0.15),lineWidth: 1)
+                        }
+                        .clipShape(
+                            RoundedRectangle(cornerRadius: 10,style: .continuous)
+                            )
                     }
                 }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 14)
 
-            VStack(
-                alignment: .leading,
-                spacing: 6
-            ) {
+            VStack(alignment: .leading,spacing: 6) {
 
-                Text("Date")
+                Text("Date & Time")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color("textPrimary").opacity(0.7))
 
-                FieldRow(icon: "calendar") {
+                HStack(spacing: 10) {
 
-                    DatePicker(
-                        "",
-                        selection: $selectedDate,
-                        displayedComponents: .date
-                    )
+                    Image(systemName: "calendar")
+                        .font(.subheadline)
+                        .foregroundStyle(Color("background"))
+                    
+                    DatePicker("", selection: $interviewViewModel.selectedDate, displayedComponents: .date)
                     .labelsHidden()
                     .datePickerStyle(.compact)
-                    .font(
-                        .system(
-                            size: 13,
-                            weight: .medium
-                        )
-                    )
+                    .font(.caption)
                     .foregroundStyle(Color("textPrimary"))
-                    .frame(
-                        maxWidth: .infinity,
-                        alignment: .leading
-                    )
+                    
+                    Divider()
+                        .frame(width: 1,height: 25)
+                    
+                    DatePicker("", selection: $interviewViewModel.selectedTime, displayedComponents: .hourAndMinute)
+                    .labelsHidden()
+                    .datePickerStyle(.compact)
+                    .font(.caption)
+                    .foregroundStyle(Color("textPrimary"))
+                    
+                    
                 }
+                .padding(.horizontal, 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(minHeight: 46)
+                .background(Color(.systemGray6).opacity(0.6))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10,style: .continuous)
+                    .stroke(Color.gray.opacity(0.15),lineWidth: 1)
+                }
+                .clipShape(
+                    RoundedRectangle(cornerRadius: 10,style: .continuous)
+                )
+                   
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 14)
 
-            VStack(
-                alignment: .leading,
-                spacing: 6
-            ) {
-
-                Text("Time")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color("textPrimary").opacity(0.7))
-
-                FieldRow(icon: "clock") {
-
-                    DatePicker(
-                        "",
-                        selection: $selectedTime,
-                        displayedComponents: .hourAndMinute
-                    )
-                    .labelsHidden()
-                    .datePickerStyle(.compact)
-                    .font(
-                        .system(
-                            size: 13,
-                            weight: .medium
-                        )
-                    )
-                    .foregroundStyle(Color("textPrimary"))
-                    .frame(
-                        maxWidth: .infinity,
-                        alignment: .leading
-                    )
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
-
-            VStack(
-                alignment: .leading,
-                spacing: 6
-            ) {
+            VStack(alignment: .leading, spacing: 6) {
 
                 Text("Duration")
                     .font(.subheadline.weight(.semibold))
@@ -218,42 +195,38 @@ struct InterviewDetailView: View {
 
                     ForEach(durations, id: \.self) { duration in
 
-                        Button(duration) {
-                            self.duration = duration
-                        }
+                        Button(duration) {interviewViewModel.duration = duration}
                     }
 
                 } label: {
 
-                    FieldRow(icon: "timer") {
+                    HStack(spacing: 10) {
 
-                        HStack {
+                        Image(systemName: "timer")
+                            .font(.subheadline)
+                            .foregroundStyle(Color("background"))
+                            .frame(width: 18)
+                        
+                        Text(interviewViewModel.duration)
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(Color("textPrimary"))
 
-                            Text(duration)
-                                .font(
-                                    .system(
-                                        size: 13,
-                                        weight: .medium
-                                    )
-                                )
-                                .foregroundStyle(
-                                    Color("textPrimary")
-                                )
+                        Spacer()
 
-                            Spacer()
-
-                            Image(
-                                systemName: "chevron.down"
-                            )
-                            .font(
-                                .system(
-                                    size: 10,
-                                    weight: .semibold
-                                )
-                            )
+                        Image(systemName: "chevron.down")
+                            .font(.caption)
                             .foregroundStyle(.secondary)
-                        }
                     }
+                    .padding(.horizontal, 12)
+                    .frame(minHeight: 46)
+                    .background(Color(.systemGray6).opacity(0.6))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 10,style: .continuous)
+                        .stroke(Color.gray.opacity(0.15),lineWidth: 1)
+                        }
+                    .clipShape(
+                        RoundedRectangle(cornerRadius: 10,style: .continuous)
+                    )
                 }
             }
             .padding(.horizontal, 16)
@@ -270,13 +243,13 @@ struct InterviewDetailView: View {
                     LocationOption(
                         icon: "video.fill",
                         title: "Google Meet",
-                        location: $location
+                        location: $interviewViewModel.location
                     )
 
                     LocationOption(
                         icon: "figure.walk",
-                        title: "Walk-in",
-                        location: $location
+                        title: "In-Office",
+                        location: $interviewViewModel.location
                     )
                 }
             }
@@ -289,7 +262,7 @@ struct InterviewDetailView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color("textPrimary").opacity(0.7))
 
-                TextField( "Add interview notes or instructions...",text: $notes,axis: .vertical)
+                TextField( "Add interview notes or instructions...",text: $interviewViewModel.notes,axis: .vertical)
                 .font(.caption)
                 .foregroundStyle(Color("textPrimary"))
                 .lineLimit(3...10)
@@ -302,16 +275,16 @@ struct InterviewDetailView: View {
         }
     }
 }
-
-#Preview {
-    InterviewDetailView(
-        interviewType: .constant("Design Interview"),
-        selectedDate: .constant(Date()),
-        selectedTime: .constant(Date()),
-        duration: .constant("60 minutes"),
-        location: .constant("Google Meet"),
-        notes: .constant(""),
-        interviewers: .constant([]),
-        onAddInterviewer: {}
-    )
-}
+//
+//#Preview {
+//    InterviewDetailView(
+//        interviewType: .constant("Design Interview"),
+//        selectedDate: .constant(Date()),
+//        selectedTime: .constant(Date()),
+//        duration: .constant("60 minutes"),
+//        location: .constant("Google Meet"),
+//        notes: .constant(""),
+//        interviewers: .constant([]),
+//        onAddInterviewer: {}
+//    )
+//}

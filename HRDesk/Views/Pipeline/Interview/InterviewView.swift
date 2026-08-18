@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ScheduleInterviewView: View {
+struct InterviewView: View {
 
     let candidate: CandidateEntity
 
@@ -17,16 +17,6 @@ struct ScheduleInterviewView: View {
     @EnvironmentObject private var todoViewModel: TodoViewModel
 
     @StateObject private var interviewViewModel = InterviewViewModel()
-
-    @State private var interviewType = "Design Interview"
-
-    @State private var selectedDate = Date()
-    @State private var selectedTime = Date()
-
-    @State private var duration = "60 minutes"
-    @State private var location = "Google Meet"
-
-    @State private var notes = ""
 
     @State private var interviewers: [Interviewer] = []
 
@@ -39,11 +29,11 @@ struct ScheduleInterviewView: View {
         let calendar = Calendar.current
 
         return calendar.date(
-            bySettingHour: calendar.component(.hour, from: selectedTime),
-            minute: calendar.component(.minute, from: selectedTime),
+            bySettingHour: calendar.component(.hour, from: interviewViewModel.selectedTime),
+            minute: calendar.component(.minute, from: interviewViewModel.selectedTime),
             second: 0,
-            of: selectedDate
-        ) ?? selectedDate
+            of: interviewViewModel.selectedDate
+        ) ?? interviewViewModel.selectedDate
     }
 
     var body: some View {
@@ -63,12 +53,6 @@ struct ScheduleInterviewView: View {
                     .padding(.horizontal, 16)
 
                 InterviewDetailView(
-                    interviewType: $interviewType,
-                    selectedDate: $selectedDate,
-                    selectedTime: $selectedTime,
-                    duration: $duration,
-                    location: $location,
-                    notes: $notes,
                     interviewers: $interviewers,
                     onAddInterviewer: {
                         showAddInterviewer = true
@@ -124,15 +108,18 @@ struct ScheduleInterviewView: View {
         } message: {
 
             Text(
-                "\(interviewType) for \(candidate.name) has been scheduled on \(formattedScheduledDate())."
+                "\(interviewViewModel.interviewType) for \(candidate.name) has been scheduled on \(formattedScheduledDate())."
             )
+        }
+        .onAppear {
+            interviewViewModel.selectedCandidateID = candidate.id
         }
     }
 }
 
 // MARK: - Bottom Button
 
-private extension ScheduleInterviewView {
+private extension InterviewView {
 
     var scheduleButton: some View {
 
@@ -144,19 +131,17 @@ private extension ScheduleInterviewView {
             }
 
             let interviewID = interviewViewModel.scheduleInterview(
-                candidateID: candidate.id,
-                candidateName: candidate.name,
-                candidateRole: candidate.role ?? "",
-                interviewType: interviewType,
+                candidateID: interviewViewModel.selectedCandidateID,
+                interviewType: interviewViewModel.interviewType,
                 date: scheduledDate,
-                duration: duration,
-                location: location,
-                notes: notes,
-                interviewers: interviewers
+                duration: interviewViewModel.duration,
+                location: interviewViewModel.location,
+                notes: interviewViewModel.notes,
+                interviewerIDs: interviewers.compactMap { $0.employeeID }
             )
 
             todoViewModel.addTodo(
-                title: "Interview: \(candidate.name) – \(interviewType)",
+                title: "Interview: \(candidate.name) – \(interviewViewModel.interviewType)",
                 dueDate: scheduledDate,
                 priority: .high,
                 interviewID: interviewID

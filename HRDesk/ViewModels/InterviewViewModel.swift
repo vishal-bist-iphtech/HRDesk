@@ -12,6 +12,16 @@ import CoreData
 final class InterviewViewModel: ObservableObject {
 
     @Published var interviews: [InterviewEntity] = []
+    
+    @Published var interviewType = "Technical Interview"
+    @Published var selectedDate = Date()
+    @Published var selectedTime = Date()
+    @Published var duration = "60 minutes"
+    @Published var location = "Google Meet"
+    @Published var notes = ""
+
+    @Published var selectedCandidateID: UUID?
+    @Published var selectedInterviewerIDs: [UUID] = []
 
     private let coreDataService = CoreDataService.shared
 
@@ -26,26 +36,22 @@ final class InterviewViewModel: ObservableObject {
 
     func scheduleInterview(
         candidateID: UUID?,
-        candidateName: String,
-        candidateRole: String,
         interviewType: String,
         date: Date,
         duration: String,
         location: String,
         notes: String,
-        interviewers: [Interviewer]
+        interviewerIDs: [UUID]
     ) -> UUID? {
 
         let interviewID = coreDataService.addInterview(
             candidateID: candidateID,
-            candidateName: candidateName,
-            candidateRole: candidateRole,
             interviewType: interviewType,
             date: date,
             duration: duration,
             location: location,
             notes: notes,
-            interviewers: interviewers
+            interviewerIDs: interviewerIDs
         )
 
         fetchInterviews()
@@ -54,16 +60,20 @@ final class InterviewViewModel: ObservableObject {
     }
 
     func deleteInterview(_ interview: InterviewEntity) {
+        
+        guard let id = interview.id else {return}
 
-        coreDataService.deleteInterview(id: interview.id ?? UUID())
+        coreDataService.deleteInterview(id: id)
 
         fetchInterviews()
     }
 
     func markAsDone(_ interview: InterviewEntity) {
+        
+        guard let id = interview.id else {return}
 
         coreDataService.updateInterviewStatus(
-            id: interview.id ?? UUID(),
+            id: id,
             status: "Done"
         )
 
@@ -75,9 +85,7 @@ final class InterviewViewModel: ObservableObject {
         done: Bool
     ) {
 
-        guard let interviewID else {
-            return
-        }
+        guard let interviewID else {return}
 
         coreDataService.updateInterviewStatus(
             id: interviewID,
@@ -91,10 +99,51 @@ final class InterviewViewModel: ObservableObject {
         _ interview: InterviewEntity,
         to date: Date
     ) {
+        guard let id = interview.id else {return}
 
         coreDataService.updateInterviewDate(
-            id: interview.id ?? UUID(),
+            id: id,
             date: date
+        )
+
+        fetchInterviews()
+    }
+
+    func moveToStatus(
+        _ interview: InterviewEntity,
+        status: String
+    ) {
+
+        guard let id = interview.id else { return }
+
+        coreDataService.updateInterviewStatus(
+            id: id,
+            status: status
+        )
+
+        fetchInterviews()
+    }
+
+    func updateInterview(
+        _ interview: InterviewEntity,
+        interviewType: String,
+        date: Date,
+        duration: String,
+        location: String,
+        notes: String,
+        interviewerIDs: [UUID]
+    ) {
+
+        guard let id = interview.id else { return }
+
+        coreDataService.updateInterview(
+            id: id,
+            interviewType: interviewType,
+            date: date,
+            duration: duration,
+            location: location,
+            notes: notes,
+            interviewerIDs: interviewerIDs
         )
 
         fetchInterviews()

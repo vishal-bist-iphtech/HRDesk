@@ -16,6 +16,7 @@
         <attribute name="role" optional="YES" attributeType="String"/>
         <attribute name="status" optional="YES" attributeType="String" defaultValueString="applied"/>
         <attribute name="website" optional="YES" attributeType="String"/>
+        <relationship name="interviews" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InterviewEntity" inverseName="candidate" inverseEntity="InterviewEntity"/>
         <relationship name="job" optional="YES" maxCount="1" deletionRule="No Action" destinationEntity="JobEntity" inverseName="candidates" inverseEntity="JobEntity"/>
     </entity>
     <entity name="EmployeeEntity" representedClassName="EmployeeEntity" syncable="YES" codeGenerationType="class">
@@ -27,21 +28,19 @@
         <attribute name="phone" attributeType="String"/>
         <attribute name="position" attributeType="String"/>
         <attribute name="salary" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="interviews" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="InterviewEntity" inverseName="interviewer" inverseEntity="InterviewEntity"/>
     </entity>
     <entity name="InterviewEntity" representedClassName="InterviewEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="candidateID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="candidateName" attributeType="String"/>
-        <attribute name="candidateRole" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="duration" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="interviewerNames" attributeType="String" defaultValueString=""/>
-        <attribute name="interviewerRoles" attributeType="String" defaultValueString=""/>
         <attribute name="interviewType" attributeType="String"/>
         <attribute name="location" attributeType="String"/>
         <attribute name="notes" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="status" attributeType="String" defaultValueString="Scheduled"/>
+        <relationship name="candidate" maxCount="1" deletionRule="Nullify" destinationEntity="CandidateEntity" inverseName="interviews" inverseEntity="CandidateEntity"/>
+        <relationship name="interviewer" toMany="YES" deletionRule="Nullify" destinationEntity="EmployeeEntity" inverseName="interviews" inverseEntity="EmployeeEntity"/>
     </entity>
     <entity name="JobEntity" representedClassName="JobEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
