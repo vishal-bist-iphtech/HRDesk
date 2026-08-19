@@ -29,6 +29,18 @@ final class AnalyticsViewModel: ObservableObject {
         candidates.count
     }
 
+    var hiredCount: Int {
+        pipelineCount(.hired)
+    }
+
+    var rejectedCount: Int {
+        pipelineCount(.rejected)
+    }
+
+    var inProgressCount: Int {
+        totalCandidates - hiredCount - rejectedCount
+    }
+
     // MARK: - Pipeline
 
     func pipelineCount(_ stage: PipelineStage) -> Int {
@@ -141,6 +153,28 @@ final class AnalyticsViewModel: ObservableObject {
     }
 
     // MARK: - Chart Data
+
+    struct FunnelStageData: Identifiable {
+
+        let stage: PipelineStage
+
+        var id: PipelineStage { stage }
+        var title: String { stage.title }
+        var color: Color { stage.color }
+        let count: Int
+    }
+
+    var funnelStages: [FunnelStageData] {
+
+        PipelineStage.allCases
+            .filter { $0 != .rejected }
+            .map { stage in
+                FunnelStageData(
+                    stage: stage,
+                    count: pipelineCount(stage)
+                )
+            }
+    }
 
     struct StageSlice: Identifiable {
         let stage: PipelineStage
