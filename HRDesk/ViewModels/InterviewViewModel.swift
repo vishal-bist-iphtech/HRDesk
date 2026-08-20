@@ -56,12 +56,24 @@ final class InterviewViewModel: ObservableObject {
 
         fetchInterviews()
 
+        if let interviewID,
+           let interview = interviews.first(where: { $0.id == interviewID }) {
+            NotificationService.shared.scheduleInterviewNotification(
+                for: interview
+            )
+            NotificationService.shared.sendInterviewScheduledNotification(
+                for: interview
+            )
+        }
+
         return interviewID
     }
 
     func deleteInterview(_ interview: InterviewEntity) {
         
         guard let id = interview.id else {return}
+
+        NotificationService.shared.cancelInterviewNotification(for: interview)
 
         coreDataService.deleteInterview(id: id)
 
@@ -78,6 +90,8 @@ final class InterviewViewModel: ObservableObject {
         )
 
         fetchInterviews()
+
+        NotificationService.shared.cancelInterviewNotification(for: interview)
     }
 
     func setDone(
@@ -93,6 +107,10 @@ final class InterviewViewModel: ObservableObject {
         )
 
         fetchInterviews()
+
+        if let interview = interviews.first(where: { $0.id == interviewID }) {
+            syncNotification(for: interview)
+        }
     }
 
     func reschedule(
@@ -107,6 +125,10 @@ final class InterviewViewModel: ObservableObject {
         )
 
         fetchInterviews()
+
+        if let updated = interviews.first(where: { $0.id == id }) {
+            syncNotification(for: updated)
+        }
     }
 
     func moveToStatus(
@@ -122,6 +144,10 @@ final class InterviewViewModel: ObservableObject {
         )
 
         fetchInterviews()
+
+        if let updated = interviews.first(where: { $0.id == id }) {
+            syncNotification(for: updated)
+        }
     }
 
     func updateInterview(
@@ -147,5 +173,20 @@ final class InterviewViewModel: ObservableObject {
         )
 
         fetchInterviews()
+
+        if let updated = interviews.first(where: { $0.id == id }) {
+            syncNotification(for: updated)
+        }
+    }
+
+    // MARK: - Notifications
+
+    private func syncNotification(for interview: InterviewEntity) {
+
+        if (interview.status ?? "Scheduled") == "Done" {
+            NotificationService.shared.cancelInterviewNotification(for: interview)
+        } else {
+            NotificationService.shared.scheduleInterviewNotification(for: interview)
+        }
     }
 }

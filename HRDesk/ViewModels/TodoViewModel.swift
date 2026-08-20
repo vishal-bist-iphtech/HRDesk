@@ -28,14 +28,15 @@ final class TodoViewModel: ObservableObject {
 
     // MARK: - Add
 
+    @discardableResult
     func addTodo(
         title: String,
         dueDate: Date,
         priority: TodoItem.Priority,
         interviewID: UUID? = nil
-    ) {
+    ) -> UUID? {
 
-        coreDataService.addTodo(
+        let todo = coreDataService.addTodo(
             title: title,
             dueDate: dueDate,
             priority: priority.rawValue,
@@ -43,6 +44,14 @@ final class TodoViewModel: ObservableObject {
         )
 
         fetchTodos()
+
+        if let todo {
+            NotificationService.shared.scheduleTodoNotification(for: todo)
+
+            return todo.id
+        }
+
+        return nil
     }
 
     func updateTodo(
@@ -51,6 +60,8 @@ final class TodoViewModel: ObservableObject {
         dueDate: Date,
         priority: TodoItem.Priority
     ) {
+
+        guard let id = todo.id else { return }
 
         coreDataService.updateTodo(
             todo,
@@ -61,12 +72,18 @@ final class TodoViewModel: ObservableObject {
         )
 
         fetchTodos()
+
+        if let updated = todos.first(where: { $0.id == id }) {
+            syncNotification(for: updated)
+        }
     }
     
     
     func deleteTodo(
         _ todo: TodoEntity
     ) {
+
+        NotificationService.shared.cancelTodoNotification(for: todo)
 
         coreDataService.deleteTodo(todo)
 
@@ -88,6 +105,8 @@ final class TodoViewModel: ObservableObject {
         )
 
         fetchTodos()
+
+        syncNotification(for: todo)
     }
 
     func setCompletion(
@@ -108,6 +127,8 @@ final class TodoViewModel: ObservableObject {
         )
 
         fetchTodos()
+
+        syncNotification(for: todo)
     }
 
     func todo(withInterviewID id: UUID?) -> TodoEntity? {
@@ -118,6 +139,17 @@ final class TodoViewModel: ObservableObject {
 
         return todos.first {
             $0.interviewID == id
+        }
+    }
+
+    // MARK: - Notifications
+
+    private func syncNotification(for todo: TodoEntity) {
+
+        if todo.isCompleted {
+            NotificationService.shared.cancelTodoNotification(for: todo)
+        } else {
+            NotificationService.shared.scheduleTodoNotification(for: todo)
         }
     }
 
