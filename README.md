@@ -26,8 +26,6 @@ HRDesk is a native iOS app that helps HR teams recruit, track, and grow talent. 
 3. Select the **HRDesk** scheme and a Simulator (or device) destination.
 4. Run (⌘R).
 
-The project uses file-system-synchronized groups, so new files added under the `HRDesk/` folder are picked up automatically.
-
 ### Building from the command line
 
 ```bash
@@ -60,15 +58,3 @@ HRDesk/
 - **Core Data Entities** — `UserEntity`, `CandidateEntity`, `JobEntity`, `InterviewEntity`, `EmployeeEntity`, `TodoEntity`.
 - **State** — Shared container (`PersistenceController`) provides the managed object context through the environment; `SessionManager` and view models are injected as environment objects.
 - **Notifications** — `NotificationService` (a `UNUserNotificationCenterDelegate`) schedules interview/task reminders at their due time, shows banners while the app is foregrounded, and clears the app badge on activation.
-
-## Notifications
-
-To schedule an interview or task and receive a local reminder:
-
-1. Grant notification permission when prompted on first launch.
-2. Notifications can be toggled in **Profile → Notifications** (opens System Settings if previously denied).
-3. An interview reminder fires at the interview date/time, and a confirmation banner appears ~3 seconds after scheduling.
-
-## License
-
-Private project — all rights reserved.
