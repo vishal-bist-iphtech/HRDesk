@@ -22,7 +22,7 @@ struct StatCard: View {
 
                 Text(title)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.textPrimary)
 
                 Spacer()
 
@@ -40,7 +40,14 @@ struct StatCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .cardStyle()
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemGroupedBackground))
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(Color.gray.opacity(0.14), lineWidth: 1)
+        }
     }
 }
 
