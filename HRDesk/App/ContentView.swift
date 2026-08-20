@@ -14,6 +14,7 @@ struct ContentView: View {
     @StateObject private var employeeViewModel = EmployeeViewModel()
     @StateObject private var interviewViewModel = InterviewViewModel()
     @StateObject private var candidateViewModel = CandidateViewModel()
+    @StateObject private var analyticsViewModel = AnalyticsViewModel()
 
     var body: some View {
         
@@ -48,7 +49,8 @@ struct ContentView: View {
             .environmentObject(jobViewModel)
             .environmentObject(employeeViewModel)
             .environmentObject(interviewViewModel)
-            .environmentObject(candidateViewModel)       
+            .environmentObject(candidateViewModel)
+            .environmentObject(analyticsViewModel)
     }
 }
 

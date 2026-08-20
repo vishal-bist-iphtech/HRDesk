@@ -24,8 +24,8 @@ struct JobChart: View {
                 let name = row.job.title ?? "Untitled"
 
                 BarMark(
-                    x: .value("Job", name),
-                    y: .value("Candidates", row.candidates)
+                    x: .value("Candidates", row.candidates),
+                    y: .value("Job", name)
                 )
                 .foregroundStyle(
                     selection == nil || selection == name
@@ -33,27 +33,52 @@ struct JobChart: View {
                     : accent.opacity(0.20)
                 )
                 .cornerRadius(5)
-                .annotation(position: .top) {
+                .annotation(
+                    position: .trailing,
+                    alignment: .leading
+                ) {
 
                     if selection == name {
 
                         Text("\(row.candidates)")
                             .font(.caption2.weight(.bold))
                             .foregroundStyle(Color("textPrimary"))
+                            .padding(.leading, 4)
+
+                    } else if selection == nil {
+
+                        Text("\(row.candidates)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .padding(.leading, 4)
                     }
                 }
             }
         }
-        .chartXSelection(value: $selection)
+        .chartYSelection(value: $selection)
+        .chartPlotStyle { plotArea in
+
+            plotArea
+                .padding(.trailing, 28)
+        }
         .chartXAxis(.hidden)
         .chartYAxis {
-            AxisMarks {
-                AxisGridLine()
-                    .foregroundStyle(Color.gray.opacity(0.15))
-                AxisValueLabel()
-                    .font(.caption2)
+
+            AxisMarks { value in
+
+                AxisValueLabel {
+                    if let name = value.as(String.self) {
+
+                        Text(name)
+                            .font(.caption2)
+                            .lineLimit(1)
+                    }
+                }
             }
         }
-        .animation(.snappy, value: selection)
+        .animation(
+            .spring(response: 0.35, dampingFraction: 0.8),
+            value: selection
+        )
     }
 }

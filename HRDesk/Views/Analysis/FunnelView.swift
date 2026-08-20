@@ -8,63 +8,61 @@
 import SwiftUI
 
 struct FunnelView: View {
-    
-    let funnelData: [FunnelRow]
 
-    private var stageColumns: [String] {
-
-        funnelData.first?.stages.map(\.name)
-            ?? PipelineStage.allCases
-                .filter { $0 != .rejected }
-                .map(\.title)
-    }
+    @ObservedObject var analyticsViewModel: AnalyticsViewModel
 
     var body: some View {
 
-        Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 8) {
+        VStack(alignment: .leading, spacing: 14) {
 
-            GridRow {
+            AnalysisSectionHeader(
+                title: "Recruitment Funnel",
+                subtitle: "Candidate progression from application to hiring"
+            )
 
-                Text("Job")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(.secondary)
+            AnalysisCard {
 
-                ForEach(stageColumns, id: \.self) { name in
+                if analyticsViewModel.totalCandidates == 0 {
 
-                    Text(name)
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
-                }
-            }
+                    ContentUnavailableView(
+                        "No Candidates",
+                        systemImage: "person.3",
+                        description: Text(
+                            "Candidate data will appear here once applications are added."
+                        )
+                    )
+                    .padding(.vertical, 10)
 
-            ForEach(funnelData) { row in
+                } else {
 
-                GridRow {
+                    RecruitmentChart(
+                        stages: analyticsViewModel.funnelStages
+                    )
 
-                    Text(row.name)
-                        .font(.caption2.weight(.medium))
-                        .foregroundStyle(Color("textPrimary"))
-                        .lineLimit(2)
+                    Divider()
+                        .padding(.vertical, 4)
 
-                    ForEach(row.stages) { stage in
+                    HStack {
 
-                        let ratio = row.stages.map(\.count).max() ?? 1
+                        Text("Overall conversion")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
 
-                        Text(stage.count > 0 ? "\(stage.count)" : "–")
-                            .font(.caption2.weight(.medium))
-                            .foregroundStyle(Color("textPrimary"))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 6)
-                            .background(
-                                stage.color.opacity(stage.count > 0
-                                    ? 0.15 + 0.5 * Double(stage.count) / Double(ratio)
-                                    : 0.05)
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                        Spacer()
+
+                        Text("\(analyticsViewModel.appliedToHired)%")
+                            .font(.subheadline.weight(.bold))
+                            .foregroundStyle(Color("background"))
                     }
                 }
             }
         }
     }
+}
+
+#Preview {
+    FunnelView(
+        analyticsViewModel: AnalyticsViewModel()
+    )
+    .padding()
 }
