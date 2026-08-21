@@ -14,6 +14,7 @@ struct HomeView: View {
     @EnvironmentObject var todoViewModel: TodoViewModel
     @EnvironmentObject var jobViewModel: JobViewModel
     @EnvironmentObject var interviewViewModel: InterviewViewModel
+    @EnvironmentObject var notificationStore: AppNotificationStore
 
     @StateObject private var dashboardViewModel = DashboardViewModel()
 
@@ -111,11 +112,31 @@ struct HomeView: View {
             }
             Spacer()
             
-            Image(systemName: "bell.badge")
-               .font(.title)
-               .foregroundStyle(.primary)
-               .symbolRenderingMode(.palette)
-               .foregroundStyle(.red, .primary)
+            NavigationLink {
+                NotificationsListView()
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: notificationStore.unreadCount > 0 ? "bell.fill" : "bell")
+                        .font(.title2)
+                        .foregroundStyle(Color.primary)
+                        .frame(width: 32, height: 32)
+
+                    if notificationStore.unreadCount > 0 {
+                        Text("\(min(notificationStore.unreadCount, 99))")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(.white)
+                            .frame(minWidth: 18, minHeight: 18)
+                            .background(Circle().fill(Color.red))
+                            .overlay(
+                                Circle().stroke(Color.white, lineWidth: 1.5)
+                            )
+                            .offset(x: 8, y: -6)
+                            .allowsHitTesting(false)
+                    }
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -295,8 +316,7 @@ struct HomeView: View {
 
             } else {
 
-                VStack(spacing: 10) {
-
+                List {
                     ForEach(
                         Array(todoViewModel.todos.prefix(5))
                     ) { todo in
@@ -304,13 +324,40 @@ struct HomeView: View {
                         TodoItem(
                             todo: todo
                         ) {
-
                             toggleTodo(todo)
                         }
+                        .swipeActions(
+                            edge: .trailing,
+                            allowsFullSwipe: false
+                        ) {
+                            Button(role: .destructive) {
+                                deleteTodo(todo)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+
+                            NavigationLink {
+                                EditTaskView(todo: todo)
+                            } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
+                            .tint(.orange)
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                        .listRowBackground(Color.clear)
                     }
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .frame(height: CGFloat(min(todoViewModel.todos.prefix(5).count, 5)) * 84)
+                .scrollDisabled(true)
             }
         }
+    }
+
+    private func deleteTodo(_ todo: TodoEntity) {
+        todoViewModel.deleteTodo(todo)
     }
 
     private func toggleTodo(_ todo: TodoEntity) {
@@ -335,4 +382,5 @@ struct HomeView: View {
         .environmentObject(TodoViewModel())
         .environmentObject(JobViewModel())
         .environmentObject(InterviewViewModel())
+        .environmentObject(AppNotificationStore.shared)
 }

@@ -15,6 +15,7 @@ struct ContentView: View {
     @StateObject private var interviewViewModel = InterviewViewModel()
     @StateObject private var candidateViewModel = CandidateViewModel()
     @StateObject private var analyticsViewModel = AnalyticsViewModel()
+    @StateObject private var notificationStore = AppNotificationStore.shared
 
     var body: some View {
         
@@ -51,6 +52,7 @@ struct ContentView: View {
             .environmentObject(interviewViewModel)
             .environmentObject(candidateViewModel)
             .environmentObject(analyticsViewModel)
+            .environmentObject(notificationStore)
     }
 }
 

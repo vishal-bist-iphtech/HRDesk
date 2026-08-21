@@ -86,14 +86,10 @@ struct AddInterviewerView: View {
                                     size: 38
                                 )
 
-                                VStack(
-                                    alignment: .leading,
-                                    spacing: 2
-                                ) {
+                                VStack(alignment: .leading, spacing: 2) {
 
                                     Text(employee.name ?? "—")
-                                    .font(
-                                        .subheadline.weight(.semibold)
+                                    .font(.subheadline.weight(.semibold)
                                     )
                                     .foregroundStyle(Color("textPrimary"))
 

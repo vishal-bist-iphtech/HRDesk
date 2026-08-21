@@ -17,6 +17,7 @@ struct HRDeskApp: App {
     
     @StateObject private var session = SessionManager()
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var notificationStore = AppNotificationStore.shared
 
     var body: some Scene {
         WindowGroup {
@@ -24,13 +25,18 @@ struct HRDeskApp: App {
                 RootView()
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
                     .environmentObject(session)
-                    .environmentObject(authViewModel)            
+                    .environmentObject(authViewModel)
+                    .environmentObject(notificationStore)
         }
         .onChange(of: scenePhase) {
 
             if scenePhase == .active {
 
-                UIApplication.shared.applicationIconBadgeNumber = 0
+                // Sync badge with in-app store instead of clearing
+                UIApplication.shared.applicationIconBadgeNumber = notificationStore.unreadCount
+                if #available(iOS 16.0, *) {
+                    UNUserNotificationCenter.current().setBadgeCount(notificationStore.unreadCount) { _ in }
+                }
 
                 NotificationService.shared.requestPermissionIfNeeded()
 

@@ -20,11 +20,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     private override init() {
 
         super.init()
-
         center.delegate = self
     }
-
-    // MARK: - Authorization
 
     func requestPermission() {
 
@@ -71,6 +68,17 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
     // MARK: - Interviews
 
+    private let interviewReminderOffsets: [Int] = [60, 30, 10]
+
+    private func removePendingInterviewUNNotifications(for id: UUID) {
+        var identifiers = interviewReminderOffsets.map {
+            interviewNotificationID(for: id, offset: $0)
+        }
+        identifiers.append(interviewNotificationID(for: id))
+        identifiers.append("instant-interview-\(id.uuidString)")
+        center.removePendingNotificationRequests(withIdentifiers: identifiers)
+    }
+
     func scheduleInterviewNotification(for interview: InterviewEntity) {
 
         guard let id = interview.id,
@@ -80,20 +88,45 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
             return
         }
 
-        cancelInterviewNotification(for: interview)
+        // Remove only system notifications, keep in-app store for update handling
+        removePendingInterviewUNNotifications(for: id)
 
-        let content = UNMutableNotificationContent()
+        for offset in interviewReminderOffsets {
 
-        content.title = "Upcoming Interview"
-        content.body = interviewNotificationBody(for: interview)
-        content.sound = .default
+            let triggerDate = date.addingTimeInterval(TimeInterval(-offset * 60))
 
-        addWithAuthorization(
-            identifier: interviewNotificationID(for: id),
-            content: content,
-            trigger: calendarTrigger(at: date),
-            userInfo: ["interviewID": id.uuidString]
-        )
+            guard triggerDate > Date() else { continue }
+
+            let content = UNMutableNotificationContent()
+
+            content.title = "Upcoming Interview"
+
+            if offset == 60 {
+                content.title = "Interview in 1 hour"
+            } else {
+                content.title = "Interview in \(offset) minutes"
+            }
+
+            content.body = interviewNotificationBody(for: interview, minutesBefore: offset)
+            content.sound = .default
+            content.badge = NSNumber(value: AppNotificationStore.shared.unreadCount + 1)
+
+            addWithAuthorization(
+                identifier: interviewNotificationID(for: id, offset: offset),
+                content: content,
+                trigger: calendarTrigger(at: triggerDate),
+                userInfo: ["interviewID": id.uuidString]
+            )
+
+            // In-app notification center entry
+            AppNotificationStore.shared.addNotification(
+                id: interviewNotificationID(for: id, offset: offset),
+                title: content.title,
+                body: content.body,
+                date: triggerDate,
+                type: .interviewReminder
+            )
+        }
     }
 
 
@@ -107,11 +140,21 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         content.body = interviewNotificationBody(for: interview)
         content.sound = .default
 
+        let identifier = "instant-interview-\(id.uuidString)"
+
         addWithAuthorization(
-            identifier: "instant-interview-\(id.uuidString)",
+            identifier: identifier,
             content: content,
             trigger: instantTrigger(),
             userInfo: ["interviewID": id.uuidString]
+        )
+
+        AppNotificationStore.shared.addNotification(
+            id: identifier,
+            title: content.title,
+            body: content.body,
+            date: Date(),
+            type: .interviewScheduled
         )
     }
 
@@ -119,15 +162,28 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
         guard let id = interview.id else {return}
 
-        center.removePendingNotificationRequests(
-            withIdentifiers: [
-                interviewNotificationID(for: id),
-                "instant-interview-\(id.uuidString)"
-            ]
-        )
+        removePendingInterviewUNNotifications(for: id)
+
+        // Also remove from in-app center
+        var identifiers = interviewReminderOffsets.map {
+            interviewNotificationID(for: id, offset: $0)
+        }
+        identifiers.append(interviewNotificationID(for: id))
+        identifiers.append("instant-interview-\(id.uuidString)")
+        AppNotificationStore.shared.removeNotifications(ids: identifiers)
     }
 
     // MARK: - Todos
+
+    private let todoHighPriorityOffsets: [Int] = [30, 5]
+
+    private func removePendingTodoUNNotifications(for id: UUID) {
+        var identifiers = todoHighPriorityOffsets.map {
+            todoNotificationID(for: id, offset: $0)
+        }
+        identifiers.append(todoNotificationID(for: id))
+        center.removePendingNotificationRequests(withIdentifiers: identifiers)
+    }
 
     func scheduleTodoNotification(for todo: TodoEntity) {
 
@@ -136,31 +192,57 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
               dueDate > Date(),
               !todo.isCompleted else {return}
 
-        cancelTodoNotification(for: todo)
+        removePendingTodoUNNotifications(for: id)
 
-        let content = UNMutableNotificationContent()
+        // Only high priority tasks should trigger notifications
+        let priority = todo.priority ?? ""
+        guard priority == "High" else {
+            // Ensure any previous high-priority reminders are cleared from center
+            AppNotificationStore.shared.removeNotifications(ids: todoHighPriorityOffsets.map { todoNotificationID(for: id, offset: $0) } + [todoNotificationID(for: id)])
+            return
+        }
 
-        content.title = "Task Due"
-        content.body = todo.title ?? "Your task is due"
-        content.sound = .default
+        for offset in todoHighPriorityOffsets {
 
-        addWithAuthorization(
-            identifier: todoNotificationID(for: id),
-            content: content,
-            trigger: calendarTrigger(at: dueDate),
-            userInfo: ["todoID": id.uuidString]
-        )
+            let triggerDate = dueDate.addingTimeInterval(TimeInterval(-offset * 60))
+
+            guard triggerDate > Date() else { continue }
+
+            let content = UNMutableNotificationContent()
+
+            content.title = "High Priority Task"
+            content.body = todoNotificationBody(for: todo, minutesBefore: offset)
+            content.sound = .default
+            content.badge = NSNumber(value: AppNotificationStore.shared.unreadCount + 1)
+
+            addWithAuthorization(
+                identifier: todoNotificationID(for: id, offset: offset),
+                content: content,
+                trigger: calendarTrigger(at: triggerDate),
+                userInfo: ["todoID": id.uuidString]
+            )
+
+            AppNotificationStore.shared.addNotification(
+                id: todoNotificationID(for: id, offset: offset),
+                title: content.title,
+                body: content.body,
+                date: triggerDate,
+                type: .todoReminder
+            )
+        }
     }
 
     func cancelTodoNotification(for todo: TodoEntity) {
 
         guard let id = todo.id else {return}
 
-        center.removePendingNotificationRequests(
-            withIdentifiers: [
-                todoNotificationID(for: id)
-            ]
-        )
+        removePendingTodoUNNotifications(for: id)
+
+        var identifiers = todoHighPriorityOffsets.map {
+            todoNotificationID(for: id, offset: $0)
+        }
+        identifiers.append(todoNotificationID(for: id))
+        AppNotificationStore.shared.removeNotifications(ids: identifiers)
     }
 
     // MARK: - Sync existing data
@@ -262,7 +344,8 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
     // MARK: - Helpers
 
     private func interviewNotificationBody(
-        for interview: InterviewEntity
+        for interview: InterviewEntity,
+        minutesBefore: Int? = nil
     ) -> String {
 
         let candidateName = interview.candidate?.fullName ?? "Candidate"
@@ -271,15 +354,39 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         let time = interview.date?
             .formatted(date: .omitted, time: .shortened) ?? ""
 
+        if let minutesBefore {
+            if minutesBefore == 60 {
+                return "\(interviewType) with \(candidateName) in 1 hour at \(time)"
+            }
+            return "\(interviewType) with \(candidateName) in \(minutesBefore) minutes at \(time)"
+        }
+
         return "\(interviewType) with \(candidateName) at \(time)"
+    }
+
+    private func todoNotificationBody(
+        for todo: TodoEntity,
+        minutesBefore: Int
+    ) -> String {
+
+        let title = todo.title ?? "Your task"
+        return "\"\(title)\" is due in \(minutesBefore) minutes"
     }
 
     private func interviewNotificationID(for id: UUID) -> String {
         "interview-\(id.uuidString)"
     }
 
+    private func interviewNotificationID(for id: UUID, offset: Int) -> String {
+        "interview-\(id.uuidString)-\(offset)"
+    }
+
     private func todoNotificationID(for id: UUID) -> String {
         "todo-\(id.uuidString)"
+    }
+
+    private func todoNotificationID(for id: UUID, offset: Int) -> String {
+        "todo-\(id.uuidString)-\(offset)"
     }
 
     private func dateComponents(from date: Date) -> DateComponents {

@@ -15,8 +15,7 @@ struct InterviewView: View {
 
     @EnvironmentObject private var candidateViewModel: CandidateViewModel
     @EnvironmentObject private var todoViewModel: TodoViewModel
-
-    @StateObject private var interviewViewModel = InterviewViewModel()
+    @EnvironmentObject private var interviewViewModel: InterviewViewModel
 
     @State private var interviewers: [Interviewer] = []
 
@@ -63,15 +62,11 @@ struct InterviewView: View {
         }
         .navigationTitle("Schedule Interview")
         .navigationBarTitleDisplayMode(.inline)
-        .safeAreaInset(
-            edge: .bottom
-        ) {
+        .safeAreaInset(edge: .bottom) {
 
             scheduleButton
         }
-        .sheet(
-            isPresented: $showAddInterviewer
-        ) {
+        .sheet( isPresented: $showAddInterviewer) {
 
             AddInterviewerView { interviewer in
 
@@ -84,10 +79,7 @@ struct InterviewView: View {
                 }
             }
         }
-        .alert(
-            "Add an Interviewer",
-            isPresented: $showMissingInterviewerAlert
-        ) {
+        .alert("Add an Interviewer", isPresented: $showMissingInterviewerAlert) {
 
             Button("OK", role: .cancel) {}
 
@@ -109,23 +101,17 @@ struct InterviewView: View {
         } message: {
 
             Text(
-                "\(interviewViewModel.interviewType) for \(candidate.name) has been scheduled on \(formattedScheduledDate()). You'll get a reminder at that time."
-            )
-        }
-        .alert(
-            "Notifications Disabled",
-            isPresented: $showNotificationDeniedAlert
-        ) {
-
-            Button("OK", role: .cancel) {}
-
-        } message: {
-
-            Text(
-                "Notifications are blocked for this app. Enable them in Settings to get reminders for interviews and tasks."
+                "\(interviewViewModel.interviewType) for \(candidate.name) has been scheduled on \(formattedScheduledDate())."
             )
         }
         .onAppear {
+            // Reset to fresh defaults so each schedule starts from current time
+            interviewViewModel.selectedDate = Date()
+            interviewViewModel.selectedTime = Date()
+            interviewViewModel.interviewType = "Technical Interview"
+            interviewViewModel.duration = "60 minutes"
+            interviewViewModel.location = "Google Meet"
+            interviewViewModel.notes = ""
             interviewViewModel.selectedCandidateID = candidate.id
         }
     }

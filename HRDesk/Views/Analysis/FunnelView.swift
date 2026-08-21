@@ -39,9 +39,6 @@ struct FunnelView: View {
                         stages: analyticsViewModel.funnelStages
                     )
 
-                    Divider()
-                        .padding(.vertical, 4)
-
                     HStack {
 
                         Text("Overall conversion")

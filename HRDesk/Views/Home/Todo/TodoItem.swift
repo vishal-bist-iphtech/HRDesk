@@ -63,10 +63,7 @@ struct TodoItem: View {
                     : .secondary.opacity(0.4)
                 )
 
-                VStack(
-                    alignment: .leading,
-                    spacing: 4
-                ) {
+                VStack(alignment: .leading, spacing: 4) {
 
                     Text(todo.title ?? "")
                         .font(
@@ -101,26 +98,16 @@ struct TodoItem: View {
                 Spacer()
 
                 Text(priority.rawValue)
-                    .font(
-                        .caption2.weight(.semibold)
-                    )
+                    .font(.caption2.weight(.semibold))
                     .foregroundStyle(priority.color)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(
-                        priority.color.opacity(0.12)
-                    )
+                    .background(priority.color.opacity(0.12))
                     .clipShape(Capsule())
             }
             .padding(12)
-            .background(
-                Color.gray.opacity(0.04)
-            )
-            .clipShape(
-                RoundedRectangle(
-                    cornerRadius: 12
-                )
-            )
+            .background(Color.gray.opacity(0.04))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
     }

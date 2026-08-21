@@ -70,4 +70,5 @@ struct AnalysisView: View {
 #Preview {
 
     AnalysisView()
+        .environmentObject(AnalyticsViewModel())
 }

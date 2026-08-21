@@ -68,39 +68,27 @@ struct TodoListView: View {
                     allowsFullSwipe: false
                 ) {
 
-                    Button(
-                        role: .destructive
-                    ) {
+                    Button(role: .destructive) {
 
                         deleteTodo(todo)
 
                     } label: {
 
-                        Label(
-                            "Delete",
-                            systemImage: "trash"
-                        )
+                        Label("Delete", systemImage: "trash")
                     }
 
                     NavigationLink {
 
-                        EditTaskView(
-                            todo: todo
-                        )
+                        EditTaskView(todo: todo)
 
                     } label: {
 
-                        Label(
-                            "Edit",
-                            systemImage: "pencil"
-                        )
+                        Label("Edit", systemImage: "pencil")
                     }
                     .tint(.orange)
                 }
                 .listRowSeparator(.hidden)
-                .listRowBackground(
-                    Color.clear
-                )
+                .listRowBackground(Color.clear)
             }
         }
         .listStyle(.plain)

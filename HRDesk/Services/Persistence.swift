@@ -8,6 +8,7 @@
 import CoreData
 
 struct PersistenceController {
+    // singleton
     static let shared = PersistenceController()
 
     @MainActor
@@ -25,6 +26,7 @@ struct PersistenceController {
         return result
     }()
 
+    // nscontainer
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
@@ -36,45 +38,42 @@ struct PersistenceController {
 
         let coordinator = container.persistentStoreCoordinator
 
+        // load persistentstore
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
 
             if let error = error as NSError? {
 
-                print(
-                    "Failed to load persistent store:",
-                    error,
-                    error.userInfo
-                )
+                print("Failed to load persistent store:", error, error.userInfo)
 
                 // Corrupt or incompatible store: discard it and recreate,otherwise the app would crash on every launch.
-                if let storeURL = storeDescription.url {
-
-                    try? FileManager.default.removeItem(at: storeURL)
-                    try? FileManager.default.removeItem(
-                        at: URL(fileURLWithPath: storeURL.path + "-shm")
-                    )
-                    try? FileManager.default.removeItem(
-                        at: URL(fileURLWithPath: storeURL.path + "-wal")
-                    )
-
-                    do {
-                        try coordinator.addPersistentStore(
-                            ofType: NSSQLiteStoreType,
-                            configurationName: nil,
-                            at: storeURL,
-                            options: nil
-                        )
-                    } catch {
-                        let nsError = error as NSError
-                        fatalError(
-                            "Failed to recreate persistent store \(nsError), \(nsError.userInfo)"
-                        )
-                    }
-
-                } else {
-
-                    fatalError("Unresolved error \(error), \(error.userInfo)")
-                }
+//                if let storeURL = storeDescription.url {
+//
+//                    try? FileManager.default.removeItem(at: storeURL)
+//                    try? FileManager.default.removeItem(
+//                        at: URL(fileURLWithPath: storeURL.path + "-shm")
+//                    )
+//                    try? FileManager.default.removeItem(
+//                        at: URL(fileURLWithPath: storeURL.path + "-wal")
+//                    )
+//
+//                    do {
+//                        try coordinator.addPersistentStore(
+//                            ofType: NSSQLiteStoreType,
+//                            configurationName: nil,
+//                            at: storeURL,
+//                            options: nil
+//                        )
+//                    } catch {
+//                        let nsError = error as NSError
+//                        fatalError(
+//                            "Failed to recreate persistent store \(nsError), \(nsError.userInfo)"
+//                        )
+//                    }
+//
+//                } else {
+//
+//                    fatalError("Unresolved error \(error), \(error.userInfo)")
+//                }
             }
 
             guard !inMemory else {return}

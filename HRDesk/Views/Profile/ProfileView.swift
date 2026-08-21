@@ -19,15 +19,24 @@ struct ProfileView: View {
     }
 
     private var name: String {
-        user?.fullName ?? "HR Admin"
+        guard let fullName = user?.fullName, !fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return "—"
+        }
+        return fullName
     }
 
     private var email: String {
-        user?.email ?? "admin@hrdesk.com"
+        guard let email = user?.email, !email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return "Not available"
+        }
+        return email
     }
 
     private var memberSince: String {
-        (user?.createdAt ?? Date()).formatted(date: .abbreviated, time: .omitted)
+        guard let date = user?.createdAt else {
+            return "—"
+        }
+        return date.formatted(date: .abbreviated, time: .omitted)
     }
 
     var body: some View {
