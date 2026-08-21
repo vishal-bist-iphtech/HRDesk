@@ -43,7 +43,6 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    /// Requests permission only when the system hasn't asked yet.
     func requestPermissionIfNeeded() {
 
         center.getNotificationSettings { settings in
@@ -97,12 +96,10 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         )
     }
 
-    /// Immediate feedback the moment an interview is scheduled.
+
     func sendInterviewScheduledNotification(for interview: InterviewEntity) {
 
-        guard let id = interview.id else {
-            return
-        }
+        guard let id = interview.id else {return}
 
         let content = UNMutableNotificationContent()
 
@@ -120,9 +117,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
     func cancelInterviewNotification(for interview: InterviewEntity) {
 
-        guard let id = interview.id else {
-            return
-        }
+        guard let id = interview.id else {return}
 
         center.removePendingNotificationRequests(
             withIdentifiers: [
@@ -139,9 +134,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         guard let id = todo.id,
               let dueDate = todo.dueDate,
               dueDate > Date(),
-              !todo.isCompleted else {
-            return
-        }
+              !todo.isCompleted else {return}
 
         cancelTodoNotification(for: todo)
 
@@ -161,9 +154,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
     func cancelTodoNotification(for todo: TodoEntity) {
 
-        guard let id = todo.id else {
-            return
-        }
+        guard let id = todo.id else {return}
 
         center.removePendingNotificationRequests(
             withIdentifiers: [
@@ -205,7 +196,6 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         )
     }
 
-    /// Adds a request only when notifications are authorized.
     private func addWithAuthorization(
         identifier: String,
         content: UNMutableNotificationContent,
@@ -215,9 +205,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
         guardAuthorization { [weak self] in
 
-            guard let self else {
-                return
-            }
+            guard let self else {return}
 
             if let userInfo {
                 content.userInfo = userInfo
@@ -259,9 +247,7 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
                     options: self.options
                 ) { granted, _ in
                     if granted {
-                        DispatchQueue.main.async {
-                            add()
-                        }
+                        DispatchQueue.main.async {add()}
                     }
                 }
 
@@ -311,7 +297,6 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
 
     // MARK: - UNUserNotificationCenterDelegate
 
-    /// Shows the notification as a banner even when the app is in the foreground.
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
@@ -320,7 +305,6 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         completionHandler([.banner, .list, .sound])
     }
 
-    /// Called when the user taps a notification.
     func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,

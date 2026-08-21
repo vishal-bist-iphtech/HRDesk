@@ -18,9 +18,7 @@ struct StageBadge: View {
             .foregroundStyle(stage.color)
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
-            .background(
-                stage.color.opacity(0.12)
-            )
+            .background(stage.color.opacity(0.12))
             .clipShape(Capsule())
     }
 }

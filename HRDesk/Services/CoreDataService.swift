@@ -15,8 +15,7 @@ final class CoreDataService {
     private let context: NSManagedObjectContext
 
     private init(
-        context: NSManagedObjectContext =
-            PersistenceController.shared.container.viewContext
+        context: NSManagedObjectContext = PersistenceController.shared.container.viewContext
     ) {
         self.context = context
     }
@@ -74,8 +73,7 @@ final class CoreDataService {
         password: String
     ) -> UserEntity? {
 
-        let request: NSFetchRequest<UserEntity> =
-            UserEntity.fetchRequest()
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "email ==[c] %@ AND password == %@",
@@ -94,14 +92,71 @@ final class CoreDataService {
             return nil
         }
     }
+
+    func updateUser(
+        id: UUID,
+        fullName: String,
+        email: String
+    ) {
+
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            id as CVarArg
+        )
+
+        request.fetchLimit = 1
+
+        guard let user = try? context.fetch(request).first else {return}
+
+        user.fullName = fullName
+        user.email = email
+
+        saveContext()
+    }
+
+    func updateUserPassword(
+        id: UUID,
+        password: String
+    ) {
+
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            id as CVarArg
+        )
+
+        request.fetchLimit = 1
+
+        guard let user = try? context.fetch(request).first else {return}
+
+        user.password = password
+
+        saveContext()
+    }
+
+    func user(withID id: UUID) -> UserEntity? {
+
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+
+        request.predicate = NSPredicate(
+            format: "id == %@",
+            id as CVarArg
+        )
+
+        request.fetchLimit = 1
+
+        return try? context.fetch(request).first
+    }
     
 
     // MARK: ---------------> Todo
 
     func fetchTodos() -> [TodoEntity] {
 
-        let request: NSFetchRequest<TodoEntity> =
-            TodoEntity.fetchRequest()
+        let request: NSFetchRequest<TodoEntity> = TodoEntity.fetchRequest()
 
         request.sortDescriptors = [
             NSSortDescriptor(key: "dueDate",ascending: true)
@@ -123,7 +178,7 @@ final class CoreDataService {
         dueDate: Date,
         priority: String,
         interviewID: UUID? = nil
-    ) {
+    ) -> TodoEntity? {
 
         let todo = TodoEntity(context: context)
 
@@ -136,6 +191,8 @@ final class CoreDataService {
         todo.interviewID = interviewID
 
         saveContext()
+
+        return todo
     }
 
     func updateTodo(
@@ -395,8 +452,7 @@ final class CoreDataService {
 
     func deleteInterview(id: UUID) {
 
-        let request: NSFetchRequest<InterviewEntity> =
-            InterviewEntity.fetchRequest()
+        let request: NSFetchRequest<InterviewEntity> = InterviewEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "id == %@",
@@ -419,8 +475,7 @@ final class CoreDataService {
         status: String
     ) {
 
-        let request: NSFetchRequest<InterviewEntity> =
-            InterviewEntity.fetchRequest()
+        let request: NSFetchRequest<InterviewEntity> = InterviewEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "id == %@",
@@ -448,8 +503,7 @@ final class CoreDataService {
         interviewerIDs: [UUID]
     ) {
 
-        let request: NSFetchRequest<InterviewEntity> =
-            InterviewEntity.fetchRequest()
+        let request: NSFetchRequest<InterviewEntity> = InterviewEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "id == %@",
@@ -498,8 +552,7 @@ final class CoreDataService {
         date: Date
     ) {
 
-        let request: NSFetchRequest<InterviewEntity> =
-            InterviewEntity.fetchRequest()
+        let request: NSFetchRequest<InterviewEntity> = InterviewEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "id == %@",
@@ -523,8 +576,7 @@ final class CoreDataService {
 
     func countActiveJobs() -> Int {
 
-        let request: NSFetchRequest<JobEntity> =
-            JobEntity.fetchRequest()
+        let request: NSFetchRequest<JobEntity> = JobEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "isActive == YES"
@@ -544,8 +596,7 @@ final class CoreDataService {
 
     func fetchCandidates() -> [CandidateEntity] {
 
-        let request: NSFetchRequest<CandidateEntity> =
-            CandidateEntity.fetchRequest()
+        let request: NSFetchRequest<CandidateEntity> = CandidateEntity.fetchRequest()
 
         request.sortDescriptors = [
             NSSortDescriptor(key: "appliedDate",ascending: false)
@@ -564,8 +615,7 @@ final class CoreDataService {
 
     func countCandidates() -> Int {
 
-        let request: NSFetchRequest<CandidateEntity> =
-            CandidateEntity.fetchRequest()
+        let request: NSFetchRequest<CandidateEntity> = CandidateEntity.fetchRequest()
 
         do {
             return try context.count(for: request)
@@ -581,8 +631,7 @@ final class CoreDataService {
 
     func countHiredCandidates() -> Int {
 
-        let request: NSFetchRequest<CandidateEntity> =
-            CandidateEntity.fetchRequest()
+        let request: NSFetchRequest<CandidateEntity> = CandidateEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "status ==[c] %@",
@@ -704,16 +753,11 @@ final class CoreDataService {
 
     private func matchingJob(for role: String) -> JobEntity? {
 
-        let trimmedRole = role.trimmingCharacters(
-            in: .whitespacesAndNewlines
-        ).lowercased()
+        let trimmedRole = role.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
 
-        guard !trimmedRole.isEmpty else {
-            return nil
-        }
+        guard !trimmedRole.isEmpty else {return nil}
 
-        let request: NSFetchRequest<JobEntity> =
-            JobEntity.fetchRequest()
+        let request: NSFetchRequest<JobEntity> = JobEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "title ==[c] %@",
@@ -735,8 +779,7 @@ final class CoreDataService {
 
     private func candidate(withID id: UUID) -> CandidateEntity? {
 
-        let request: NSFetchRequest<CandidateEntity> =
-            CandidateEntity.fetchRequest()
+        let request: NSFetchRequest<CandidateEntity> = CandidateEntity.fetchRequest()
 
         request.predicate = NSPredicate(
             format: "id == %@",

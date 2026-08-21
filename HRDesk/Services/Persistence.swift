@@ -46,8 +46,7 @@ struct PersistenceController {
                     error.userInfo
                 )
 
-                // Corrupt or incompatible store: discard it and recreate,
-                // otherwise the app would crash on every launch.
+                // Corrupt or incompatible store: discard it and recreate,otherwise the app would crash on every launch.
                 if let storeURL = storeDescription.url {
 
                     try? FileManager.default.removeItem(at: storeURL)
@@ -78,9 +77,7 @@ struct PersistenceController {
                 }
             }
 
-            guard !inMemory else {
-                return
-            }
+            guard !inMemory else {return}
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
     }

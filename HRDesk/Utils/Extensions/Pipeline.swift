@@ -43,8 +43,7 @@ extension PipelineView {
             } label: {
 
                 Image(
-                    systemName:
-                        isKanban
+                    systemName: isKanban
                         ? "square.grid.2x2.fill"
                         : "hand.point.up.left.fill"
                 )
@@ -78,10 +77,7 @@ extension PipelineView {
 
             HStack(spacing: 10) {
 
-                ForEach(
-                    PipelineStage.allCases,
-                    id: \.self
-                ) { stage in
+                ForEach(PipelineStage.allCases, id: \.self) { stage in
 
                     StageCard(
                         stage: stage,
@@ -117,17 +113,14 @@ extension PipelineView {
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Color("textPrimary").opacity(0.7))
 
-                    Text(
-                        sortAscending
-                        ? "Latest"
-                        : "Last"
+                    Text(sortAscending
+                        ? "Newest"
+                        : "Oldest"
                     )
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
 
-                    Image(
-                        systemName: "chevron.down"
-                    )
+                    Image(systemName: "chevron.down")
                     .font(.caption.weight(.medium))
                 }
                 .padding(6)
@@ -137,9 +130,7 @@ extension PipelineView {
 
             Spacer()
 
-            Text(
-                "\(filteredCandidates.count) Candidates"
-            )
+            Text("\(filteredCandidates.count) Candidates")
             .font(.subheadline.weight(.medium))
             .foregroundStyle(Color("textPrimary"))
 
@@ -151,9 +142,7 @@ extension PipelineView {
 
             } label: {
 
-                Image(
-                    systemName:
-                        isSearching
+                Image(systemName: isSearching
                         ? "xmark"
                         : "magnifyingglass"
                 )
@@ -171,10 +160,7 @@ extension PipelineView {
                 .font(.caption)
                 .foregroundStyle(Color("textPrimary"))
 
-            TextField(
-                "Search candidates",
-                text: $searchText
-            )
+            TextField("Search candidates", text: $searchText)
             .font(.subheadline)
             .foregroundStyle(Color("textPrimary"))
             .autocorrectionDisabled()
@@ -187,9 +173,7 @@ extension PipelineView {
 
                 } label: {
 
-                    Image(
-                        systemName: "xmark.circle.fill"
-                    )
+                    Image(systemName: "xmark.circle.fill")
                     .font(.caption)
                     .foregroundStyle(Color("textPrimary"))
                 }
@@ -219,30 +203,20 @@ extension PipelineView {
 
                 NavigationLink {
 
-                    CandidateDetailView(
-                        candidate: candidate
-                    )
+                    CandidateDetailView(candidate: candidate)
 
                 } label: {
 
-                    CandidateCard(
-                        candidate: candidate,
-                        onMoveStage: { newStage in
+                    CandidateCard(candidate: candidate, onMoveStage: { newStage in
 
-                            candidateViewModel.moveToStage(
-                                candidate,
-                                stage: newStage
-                            )
+                            candidateViewModel.moveToStage(candidate, stage: newStage)
                         },
                         onEdit: {
 
                             editingCandidate = candidate
                         },
                         onDelete: {
-
-                            candidateViewModel.deleteCandidate(
-                                candidate
-                            )
+                            candidateViewModel.deleteCandidate(candidate)
                         }
                     )
                 }
@@ -257,10 +231,7 @@ extension PipelineView {
             candidates: filteredCandidates,
             onMoveStage: { candidate, stage in
 
-                candidateViewModel.moveToStage(
-                    candidate,
-                    stage: stage
-                )
+                candidateViewModel.moveToStage(candidate, stage: stage)
             },
             onAddCandidate: { stage in
 

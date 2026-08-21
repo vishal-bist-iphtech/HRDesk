@@ -29,9 +29,7 @@ struct ApplicationsByJobView: View {
                     ContentUnavailableView(
                         "No Jobs Posted",
                         systemImage: "briefcase",
-                        description: Text(
-                            "Post a job to start receiving applications."
-                        )
+                        description: Text("Post a job to start receiving applications.")
                     )
                     .padding(.vertical, 20)
 

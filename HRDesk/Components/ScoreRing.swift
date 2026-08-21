@@ -45,10 +45,7 @@ struct ScoreRing: View {
                 )
 
             Circle()
-                .trim(
-                    from: 0,
-                    to: min(CGFloat(score) / 100, 1)
-                )
+                .trim(from: 0, to: min(CGFloat(score) / 100, 1))
                 .stroke(
                     color,
                     style: StrokeStyle(
@@ -62,9 +59,7 @@ struct ScoreRing: View {
                 VStack(spacing: 0){
                     
                     Text("\(score)%")
-                        .font(
-                            .system(size: size * 0.30, weight: .bold)
-                        )
+                        .font(.system(size: size * 0.30, weight: .bold))
                     
                     Text("Match")
                     .font(.system(size: size * 0.20, weight: .bold))
@@ -75,22 +70,15 @@ struct ScoreRing: View {
                 VStack(spacing: 0) {
 
                     Text("\(score)")
-                        .font(
-                            .system(size: size * 0.34, weight: .bold)
-                        )
+                        .font(.system(size: size * 0.34, weight: .bold))
 
                     Text("Match")
-                        .font(
-                            .system(size: size * 0.16)
-                        )
+                        .font(.system(size: size * 0.16))
                 }
                 .foregroundStyle(color)
             }
         }
-        .frame(
-            width: size,
-            height: size
-        )
+        .frame(width: size, height: size)
     }
 }
 

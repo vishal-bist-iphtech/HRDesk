@@ -42,7 +42,7 @@ struct LoginView: View {
         .alert("Reset Password", isPresented: $showForgotAlert) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Koi nhi hota hai, ye try krke dekho - 'qwer1234'.")
+            Text("Ye try krke dekho - 'qwer1234'.")
                 .fontWeight(.bold)
         }
         .alert("Login Failed", isPresented: $showErrorAlert) {

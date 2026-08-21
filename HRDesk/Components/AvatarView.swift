@@ -27,23 +27,13 @@ struct AvatarView: View {
         ZStack {
 
             Circle()
-                .fill(
-                    Color("background")
-                        .opacity(0.14)
-                )
+                .fill(Color("background").opacity(0.14))
 
             Text(initials)
-                .font(
-                    .system(size: size * 0.32, weight: .semibold)
-                )
-                .foregroundStyle(
-                    Color("background")
-                )
+                .font(.system(size: size * 0.32, weight: .semibold))
+                .foregroundStyle(Color("background"))
         }
-        .frame(
-            width: size,
-            height: size
-        )
+        .frame(width: size,height: size)
         .overlay(alignment: .bottomTrailing) {
 
             if showsMatchBadge {

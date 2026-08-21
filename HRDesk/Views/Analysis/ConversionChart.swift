@@ -42,10 +42,7 @@ struct ConversionChart: View {
                 )
             )
             .cornerRadius(6)
-            .annotation(
-                position: .overlay,
-                alignment: .trailing
-            ) {
+            .annotation(position: .overlay, alignment: .trailing) {
 
                 Text("\(item.percentage)%")
                     .font(.caption2.weight(.bold))
@@ -53,9 +50,7 @@ struct ConversionChart: View {
                     .padding(.trailing, 8)
             }
         }
-        .chartXScale(
-            domain: 0...max(100, maxValue)
-        )
+        .chartXScale(domain: 0...max(100, maxValue))
         .chartXAxis(.hidden)
         .chartYAxis {
 

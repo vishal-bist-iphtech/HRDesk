@@ -35,4 +35,50 @@ final class AuthViewModel: ObservableObject {
             password: password
         )
     }
+
+    func updateProfile(
+        user: UserEntity,
+        fullName: String,
+        email: String
+    ) -> Bool {
+
+        guard let id = user.id else {
+            return false
+        }
+
+        coreDataService.updateUser(
+            id: id,
+            fullName: fullName,
+            email: email
+        )
+
+        user.fullName = fullName
+        user.email = email
+
+        return true
+    }
+
+    func changePassword(
+        user: UserEntity,
+        currentPassword: String,
+        newPassword: String
+    ) -> Bool {
+
+        guard let id = user.id else {
+            return false
+        }
+
+        guard user.password == currentPassword else {
+            return false
+        }
+
+        coreDataService.updateUserPassword(
+            id: id,
+            password: newPassword
+        )
+
+        user.password = newPassword
+
+        return true
+    }
 }

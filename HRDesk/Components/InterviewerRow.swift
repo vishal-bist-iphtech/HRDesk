@@ -17,50 +17,23 @@ struct InterviewerRow: View {
         HStack(spacing: 10) {
 
             Circle()
-                .fill(
-                    Color("background")
-                        .opacity(0.12)
-                )
-                .frame(
-                    width: 34,
-                    height: 34
-                )
+                .fill(Color("background").opacity(0.12))
+                .frame(width: 34,height: 34)
                 .overlay {
 
                     Text(person.initials)
-                        .font(
-                            .system(
-                                size: 11,
-                                weight: .semibold
-                            )
-                        )
-                        .foregroundStyle(
-                            Color("background")
-                        )
+                        .font(.system(size: 11,weight: .semibold))
+                        .foregroundStyle(Color("background"))
                 }
 
-            VStack(
-                alignment: .leading,
-                spacing: 1
-            ) {
+            VStack(alignment: .leading,spacing: 1) {
 
                 Text(person.name)
-                    .font(
-                        .system(
-                            size: 13,
-                            weight: .semibold
-                        )
-                    )
-                    .foregroundStyle(
-                        Color("textPrimary")
-                    )
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color("textPrimary"))
 
                 Text(person.role)
-                    .font(
-                        .system(
-                            size: 11
-                        )
-                    )
+                    .font(.system(size: 11))
                     .foregroundStyle(.secondary)
             }
 
@@ -74,33 +47,23 @@ struct InterviewerRow: View {
 
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 16))
-                        .foregroundStyle(
-                            Color.gray.opacity(0.4)
-                        )
+                        .foregroundStyle(Color.gray.opacity(0.4))
                 }
             }
         }
         .padding(.horizontal, 12)
         .frame(minHeight: 46)
-        .background(
-            Color(.systemGray6).opacity(0.6)
-        )
+        .background(Color(.systemGray6).opacity(0.6))
         .overlay {
 
-            RoundedRectangle(
-                cornerRadius: 10,
-                style: .continuous
-            )
+            RoundedRectangle(cornerRadius: 10,style: .continuous)
             .stroke(
                 Color.gray.opacity(0.15),
                 lineWidth: 1
             )
         }
         .clipShape(
-            RoundedRectangle(
-                cornerRadius: 10,
-                style: .continuous
-            )
+            RoundedRectangle(cornerRadius: 10,style: .continuous)
         )
     }
 }

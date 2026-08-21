@@ -33,5 +33,12 @@ final class SessionManager: ObservableObject {
         currentUser = nil
         isLoggedIn = false
     }
+
+    func refreshCurrentUser() {
+        guard let userID = currentUser?.id else {return}
+
+        currentUser = CoreDataService.shared.user(withID: userID)
+        objectWillChange.send()
+    }
     
 }

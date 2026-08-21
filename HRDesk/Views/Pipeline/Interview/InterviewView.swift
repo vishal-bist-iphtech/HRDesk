@@ -23,6 +23,7 @@ struct InterviewView: View {
     @State private var showAddInterviewer = false
     @State private var showMissingInterviewerAlert = false
     @State private var showScheduledConfirmation = false
+    @State private var showNotificationDeniedAlert = false
 
     private var scheduledDate: Date {
 
@@ -108,7 +109,20 @@ struct InterviewView: View {
         } message: {
 
             Text(
-                "\(interviewViewModel.interviewType) for \(candidate.name) has been scheduled on \(formattedScheduledDate())."
+                "\(interviewViewModel.interviewType) for \(candidate.name) has been scheduled on \(formattedScheduledDate()). You'll get a reminder at that time."
+            )
+        }
+        .alert(
+            "Notifications Disabled",
+            isPresented: $showNotificationDeniedAlert
+        ) {
+
+            Button("OK", role: .cancel) {}
+
+        } message: {
+
+            Text(
+                "Notifications are blocked for this app. Enable them in Settings to get reminders for interviews and tasks."
             )
         }
         .onAppear {
@@ -153,6 +167,8 @@ private extension InterviewView {
                     stage: .interview
                 )
             }
+
+            checkNotificationPermission()
 
             showScheduledConfirmation = true
 
@@ -200,5 +216,20 @@ private extension InterviewView {
             date: .abbreviated,
             time: .shortened
         )
+    }
+
+    func checkNotificationPermission() {
+
+        NotificationService.shared.authorizationStatus { status in
+
+            switch status {
+
+            case .authorized, .provisional, .ephemeral, .notDetermined:
+                break
+
+            default:
+                showNotificationDeniedAlert = true
+            }
+        }
     }
 }

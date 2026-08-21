@@ -43,28 +43,18 @@ struct LocationOption: View {
             .frame(maxWidth: .infinity)
             .frame(minHeight: 46)
             .background(
-                isSelected
-                ? Color("background")
-                : Color(.systemGray6).opacity(0.6)
+                isSelected ? Color("background") : Color(.systemGray6).opacity(0.6)
             )
             .overlay {
 
-                RoundedRectangle(
-                    cornerRadius: 10,
-                    style: .continuous
-                )
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .stroke(
-                    isSelected
-                    ? Color("background")
-                    : Color.gray.opacity(0.15),
+                    isSelected ? Color("background") : Color.gray.opacity(0.15),
                     lineWidth: 1
                 )
             }
             .clipShape(
-                RoundedRectangle(
-                    cornerRadius: 10,
-                    style: .continuous
-                )
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
             )
         }
         .buttonStyle(.plain)

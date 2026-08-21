@@ -45,20 +45,14 @@ struct InteractiveDonutChart: View {
 
         Chart(data) { slice in
 
-            SectorMark(
-                angle: .value(
-                    "Count",
-                    slice.count
-                ),
+            SectorMark(angle: .value("Count", slice.count),
                 innerRadius: .ratio(
                     innerRadiusRatio
                 ),
                 angularInset: 0.5
             )
             .cornerRadius(5)
-            .foregroundStyle(
-                slice.color
-            )
+            .foregroundStyle(slice.color)
             .opacity(
                 selected == nil ||
                 selected?.id == slice.id
@@ -81,10 +75,7 @@ struct InteractiveDonutChart: View {
 
                         VStack(spacing: 2) {
 
-                            Text(
-                                selected?.label ??
-                                centerTitle
-                            )
+                            Text(selected?.label ?? centerTitle)
                             .font(
                                 .subheadline.weight(
                                     .semibold
@@ -95,41 +86,22 @@ struct InteractiveDonutChart: View {
                             )
                             .lineLimit(1)
 
-                            Text(
-                                selected.map {
-                                    "\($0.count)"
-                                }
+                            Text(selected.map {"\($0.count)"}
                                 ?? (
-                                    centerValue
-                                    ?? "\(total)"
+                                    centerValue ?? "\(total)"
                                 )
                             )
-                            .font(
-                                .title2.bold()
-                            )
-                            .foregroundStyle(
-                                Color("textPrimary")
-                            )
+                            .font(.title2.bold())
+                            .foregroundStyle(Color("textPrimary"))
 
                             if selected != nil {
 
-                                Text(
-                                    "\(Int(Double(selected!.count) / Double(total) * 100))%"
-                                )
-                                .font(
-                                    .caption.weight(
-                                        .semibold
-                                    )
-                                )
-                                .foregroundStyle(
-                                    Color("background")
-                                )
+                                Text("\(Int(Double(selected!.count) / Double(total) * 100))%")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(Color("background"))
                             }
                         }
-                        .position(
-                            x: frame.midX,
-                            y: frame.midY
-                        )
+                        .position(x: frame.midX, y: frame.midY)
                     }
                 }
             }
@@ -141,8 +113,7 @@ struct InteractiveDonutChart: View {
                 Rectangle()
                     .fill(Color.clear)
                     .contentShape(Rectangle())
-                    .gesture(
-                        SpatialTapGesture()
+                    .gesture(SpatialTapGesture()
                             .onEnded { value in
 
                                 selectSlice(
@@ -188,10 +159,7 @@ struct InteractiveDonutChart: View {
             )
 
         let outerRadius =
-            min(
-                frame.width,
-                frame.height
-            ) / 2
+            min(frame.width, frame.height) / 2
 
         let innerRadius =
             outerRadius *
